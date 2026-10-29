@@ -1013,10 +1013,10 @@ fn window_title_with_no_document_is_the_app_name() {
 fn window_title_follows_the_active_file() {
     let mut app = title_test_app(true);
     app.run("file.new", json!({"width": 100, "height": 100, "name": "foo.svg"})).unwrap();
-    assert_eq!(super::window_title(&app), "foo.svg \u{2014} DRAWcraft");
+    assert_eq!(super::window_title(&app), "foo.svg \u{2014} DRAWCraft");
     // Unsaved changes gain a `*` prefix, like the `*` in the document tabs.
     app.run("shape.rectangle", json!({"x": 0, "y": 0, "width": 10, "height": 10})).unwrap();
-    assert_eq!(super::window_title(&app), "*foo.svg \u{2014} DRAWcraft");
+    assert_eq!(super::window_title(&app), "*foo.svg \u{2014} DRAWCraft");
 }
 
 #[test]
@@ -1063,7 +1063,7 @@ fn sync_window_title_sends_only_on_change() {
     assert!(!cmds.iter().any(|c| matches!(c, egui::ViewportCommand::Title(_))), "repeat Title: {cmds:?}");
     app.run("file.new", json!({"width": 100, "height": 100, "name": "foo.svg"})).unwrap();
     super::sync_window_title(&mut app, &ctx);
-    assert_eq!(app.last_window_title, "foo.svg \u{2014} DRAWcraft");
+    assert_eq!(app.last_window_title, "foo.svg \u{2014} DRAWCraft");
 }
 /// Draw actual tabs, including the same per-frame view synchronization as the app.
 fn artboard_document_tabs_frame(app: &mut crate::VectorcraftApp, ctx: &egui::Context, events: Vec<egui::Event>) -> Vec<egui::Rect> {

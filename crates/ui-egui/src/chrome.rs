@@ -42,7 +42,7 @@ const MARK: f32 = 18.0;
 /// Height of the workspace switcher.
 const WIDGET_H: f32 = 22.0;
 
-/// The application bar: brand mark, Home, menus, then Discord, search and the workspace switcher
+/// The application bar: brand mark, Home, menus, then GitHub, search and the workspace switcher
 /// at the right. With [`VectorcraftApp::custom_titlebar`] it is also the window's title bar
 /// ([`titlebar`]): the caption buttons take the right end and the rest of the bar drags the window.
 /// On macOS, under the system's transparent title bar, its empty space drags and zooms the window
@@ -75,7 +75,7 @@ pub fn app_bar(app: &mut VectorcraftApp, ui: &mut Ui) {
             // With the macOS menu bar the menus are at the top of the screen instead.
             let menus_end = if app.services.native_menu.is_some() { ui.cursor().min.x } else { menus::menu_bar(app, ui) };
             // The right-side group fills the space after the menus from the right; when it runs
-            // short, Discord goes first (it is also under Help), then the search icon (the palette
+            // short, GitHub goes first (it is also under Help), then the search icon (the palette
             // stays under its shortcut), then the workspace switcher narrows.
             let full = ui.max_rect();
             let right_edge = if custom { full.right() - titlebar::WIDTH - 10.0 } else { full.right() };
@@ -95,7 +95,7 @@ pub fn app_bar(app: &mut VectorcraftApp, ui: &mut Ui) {
             let mode_w = crate::modes::width(ui);
             let mode = room >= ws_w + 8.0 + gap + mode_w + 8.0 + gap + if search { icon } else { 0.0 };
             let mode_room = if mode { mode_w + 8.0 + gap } else { 0.0 };
-            let discord = search && room >= ws_w + 8.0 + gap + icon + 10.0 + gap + crate::community::discord_width(ui, false) + mode_room;
+            let github = search && room >= ws_w + 8.0 + gap + icon + 10.0 + gap + crate::community::github_width(ui, false) + mode_room;
             let mut rui = ui.new_child(egui::UiBuilder::new().max_rect(right).layout(egui::Layout::right_to_left(egui::Align::Center)));
             let ui = &mut rui;
             // Workspace switcher: shows the current workspace, opens Window → Workspace.
@@ -121,9 +121,9 @@ pub fn app_bar(app: &mut VectorcraftApp, ui: &mut Ui) {
                     app.ui.palette_query.clear();
                 }
             }
-            if discord {
+            if github {
                 ui.add_space(10.0);
-                crate::community::discord_button(app, ui, false);
+                crate::community::github_button(app, ui, false);
             }
             if app.services.native_menu.is_some() {
                 let title = ui.painter().layout_no_wrap(crate::i18n::PRODUCT_NAME.into(), egui::FontId::proportional(13.5), t.text);

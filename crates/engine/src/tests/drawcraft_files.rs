@@ -1,4 +1,4 @@
-//! DRAWcraft: native files save under the `.drawcraft` name, as VectorCraft files of the current
+//! DRAWCraft: native files save under the `.drawcraft` name, as VectorCraft files of the current
 //! version, and open as current files.
 
 use serde_json::{Value, json};
@@ -21,7 +21,7 @@ fn native_files_save_as_drawcraft_and_open_as_current() {
     // current file.
     assert_eq!(head["format"], "vectorcraft");
     assert_eq!(head["version"], vectorcraft_format::VERSION);
-    assert!(head["generator"].as_str().unwrap().starts_with("DRAWcraft "));
+    assert!(head["generator"].as_str().unwrap().starts_with("DRAWCraft "));
     // Opened under the `.drawcraft` name, it isn't an old file: Save writes it back in place.
     let mut o = Session::new();
     o.execute("document.open", &json!({"name": "Poster.drawcraft", "dataBase64": saved["dataBase64"]})).unwrap();

@@ -1,7 +1,7 @@
-# DRAWcraft app icon
+# DRAWCraft app icon
 
 **Figure:** a medieval knight's helm: a great bascinet with a pointed visor, eye slits and breathing
-holes, a plume of ostrich feathers, the gorget and the shoulder plates. DRAWcraft's mascot, the
+holes, a plume of ostrich feathers, the gorget and the shoulder plates. DRAWCraft's mascot, the
 companion to upstream VectorCraft's dragon.
 
 **Style:** an engraving-style portrait in the Crafting Apps template (as VectorCraft's dragon and the
@@ -15,12 +15,12 @@ shadow; there are no filled greys.
 |---|---|---|
 | Ink | `#0b0b0c` | line work and contour |
 | Paper | `#efe9dc` | the figure |
-| DRAWcraft colour | `#2d5c9e` | the full-bleed field (heraldic azure) |
+| DRAWCraft colour | `#2d5c9e` | the full-bleed field (heraldic azure) |
 
 **Tile:** `viewBox="0 0 512 512"`, a rounded square with `rx=112`, clipped. The macOS files add Apple's
 transparent margin (tile = 824/1024 of the canvas); Windows and Linux use the tile edge to edge.
 
-**Provenance:** original artwork for DRAWcraft, generated in code by
+**Provenance:** original artwork for DRAWCraft, generated in code by
 [`packaging/knight-icon.py`](../../packaging/knight-icon.py) (standard library only, deterministic).
 `vectorcraft.svg` is its output and the canonical artwork; `vectorcraft-small.svg` is the same file. The
 file names stay those of upstream so every build and packaging script keeps working unchanged.
@@ -47,7 +47,7 @@ Licence: see `LICENSE.txt`.
   menu, Explorer, Alt-Tab); the runtime icon covers the title bar.
 - **Linux:** install `packaging/linux/ai.storyteller.vectorcraft.desktop` to `share/applications/` and
   `hicolor/` to `share/icons/`. The app sets its Wayland app ID / X11 class to
-  `ai.storyteller.vectorcraft` (DRAWcraft's own identifiers are plan item D7).
+  `ai.storyteller.vectorcraft` (DRAWCraft's own identifiers are plan item D7).
 - **Web:** the page's favicon and home-screen icon (`apps/vectorcraft-web/index.html`).
 
 ## Regenerate

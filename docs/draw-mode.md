@@ -11,7 +11,7 @@ Work on the fork `withshalom/vectorcraft`, meant to go to VectorCraft as pull re
 The rules for both: VectorCraft stays VectorCraft. Its name, its icon, its file format and extension
 (`.vectorcraft`, format version 4) and its default Illustrator-style workspace don't change. Every change is
 additive and sits beside upstream's code, so the branches merge `main` easily and each piece can become its own
-pull request. (DRAWcraft, the product built on this work, lives in its own repository, `withshalom/drawcraft`,
+pull request. (DRAWCraft, the product built on this work, lives in its own repository, `withshalom/drawcraft`,
 and is never proposed upstream.)
 
 ## 1. What exists today (2026-10-28)

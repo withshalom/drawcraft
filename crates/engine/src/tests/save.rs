@@ -218,7 +218,7 @@ fn older_native_files_open_converted_and_save_under_a_new_name() {
     let mut s = Session::new();
     s.execute("document.open", &json!({"path": legacy})).unwrap();
     assert_eq!(s.doc().unwrap().title(), "logo [Converted]");
-    // Save doesn't overwrite the old file: it asks for a name (DRAWcraft: a .drawcraft one).
+    // Save doesn't overwrite the old file: it asks for a name (DRAWCraft: a .drawcraft one).
     let r = s.execute("document.save", &json!({})).unwrap();
     assert_eq!((r["name"].as_str(), r.get("path")), (Some("logo.drawcraft"), None));
     assert_eq!(std::fs::read(&legacy).unwrap(), old_file(true));

@@ -606,7 +606,7 @@ fn export_for_screens_one_page_per_pdf_unique_names() {
     assert_eq!(image::load_from_memory(&b64(&r["files"][0])).unwrap().width(), 50);
     // A native row: each artboard as a document of its own to edit.
     let r = s.execute("document.exportForScreens", &json!({"range": "1", "formats": [{"format": "vectorcraft"}]})).unwrap();
-    // DRAWcraft: native files are .drawcraft.
+    // DRAWCraft: native files are .drawcraft.
     assert!(r["files"][0]["name"].as_str().unwrap().ends_with(".drawcraft"), "{r}");
     let _ = std::fs::remove_dir_all(dir);
 }

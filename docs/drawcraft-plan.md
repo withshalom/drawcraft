@@ -1,6 +1,6 @@
-# DRAWcraft: plan for a CorelDRAW-class product on VectorCraft
+# DRAWCraft: plan for a CorelDRAW-class product on VectorCraft
 
-> **Last reviewed:** 2026-10-29 · **Last updated:** 2026-10-29 · **Change:** minor (Draw mode merged into `main`; previously: `main` is now the DRAWcraft app and publishes the web build; two repositories: product here, features on `withshalom/vectorcraft`; DRAWcraft spelling; `web` branch; previously: section 7, what's built: branding, icon, `.drawcraft` saving, pages first slice, web build; previously: the page model is an artboard plus a side table, not a second rectangle type; owner's decisions D1 and D2 recorded; P0 rules added; the "no version bump" format rule and our own command names corrected from the first version)
+> **Last reviewed:** 2026-10-29 · **Last updated:** 2026-10-29 · **Change:** minor (Draw mode merged into `main`; previously: `main` is now the DRAWCraft app and publishes the web build; two repositories: product here, features on `withshalom/vectorcraft`; DRAWCraft spelling; `web` branch; previously: section 7, what's built: branding, icon, `.drawcraft` saving, pages first slice, web build; previously: the page model is an artboard plus a side table, not a second rectangle type; owner's decisions D1 and D2 recorded; P0 rules added; the "no version bump" format rule and our own command names corrected from the first version)
 
 Branch `drawcraft` of `withshalom/drawcraft`. Written 2026-10-28. A plan and a list of decisions for the owner.
 
@@ -8,11 +8,11 @@ Branch `drawcraft` of `withshalom/drawcraft`. Written 2026-10-28. A plan and a l
 VectorCraft's own terms and with `.vectorcraft` files, on `withshalom/vectorcraft`, so they can go to VectorCraft
 as pull requests: `draw-mode` (pages, master layers, draw-mode tools and layout, dimensioning, from `main`),
 `cdr` (`.cdr` reading, then writing, from `draw-mode`) and `web` (`draw-mode` published). Their plan is
-`docs/draw-mode.md` there. `withshalom/drawcraft` is the product, the same work under DRAWcraft's identity:
+`docs/draw-mode.md` there. `withshalom/drawcraft` is the product, the same work under DRAWCraft's identity:
 
 | Branch | What it is |
 |---|---|
-| `main` | the DRAWcraft app: upstream's `main` plus DRAWcraft's identity (name, logo, icon, `.drawcraft` files, README) and the Pages workflow; published at <https://withshalom.github.io/drawcraft/> |
+| `main` | the DRAWCraft app: upstream's `main` plus DRAWCraft's identity (name, logo, icon, `.drawcraft` files, README) and the Pages workflow; published at <https://withshalom.github.io/drawcraft/> |
 | `drawcraft` | the identity commits on their own, on top of upstream's `main` (`main` was moved up to here) |
 | `draw-mode` | `drawcraft` with the vectorcraft repo's `draw-mode` merged; merged into `main` when the owner approves it (first on 2026-10-29: Illustrate and Draw modes, page bar, swatch strip) |
 | `cdr` | `draw-mode` here with the vectorcraft repo's `cdr` merged |
@@ -36,13 +36,13 @@ only. Everything a user reads in the app (command labels, menus, panels, params 
 
 | # | Decision | Recommendation |
 |---|---|---|
-| D1 | **Name.** DrawCraft was upstream's name for this app until 2026-10-01; `.drawcraft` files and `"format": "drawcraft"` headers still open there (`LEGACY_EXTENSION`). | **Decided (owner, 2026-10-28): the product is DRAWcraft and its extension is `.drawcraft`.** It reuses upstream's legacy name on purpose. Consequences are in D2 and D7. The GitHub repository keeps its name (`withshalom/vectorcraft`) until the owner says otherwise. |
-| D2 | **Native format.** | **Decided: `.drawcraft` is the same format as `.vectorcraft`**, not a second one. Upstream's reader opens both names at every version and decides by content, so one reader handles upstream's old `.drawcraft` files (no pages: artboards mode) and ours. **Never bump `VERSION` (4):** upstream's reader refuses a file whose version is newer than it knows, so a bump would lock upstream's VectorCraft out of our files. DRAWcraft's additions are optional document fields that are written only when used; a document without pages saves exactly as before, and upstream's reader keeps what it doesn't know in `Document::extra` instead of dropping it. Open details: which `format` header and `generator` string our files carry (`"drawcraft"` makes upstream treat the file as old and rewrite it as `.vectorcraft` on save), and the default Save As extension. |
+| D1 | **Name.** DrawCraft was upstream's name for this app until 2026-10-01; `.drawcraft` files and `"format": "drawcraft"` headers still open there (`LEGACY_EXTENSION`). | **Decided (owner, 2026-10-28): the product is DRAWCraft and its extension is `.drawcraft`.** It reuses upstream's legacy name on purpose. Consequences are in D2 and D7. The GitHub repository keeps its name (`withshalom/vectorcraft`) until the owner says otherwise. |
+| D2 | **Native format.** | **Decided: `.drawcraft` is the same format as `.vectorcraft`**, not a second one. Upstream's reader opens both names at every version and decides by content, so one reader handles upstream's old `.drawcraft` files (no pages: artboards mode) and ours. **Never bump `VERSION` (4):** upstream's reader refuses a file whose version is newer than it knows, so a bump would lock upstream's VectorCraft out of our files. DRAWCraft's additions are optional document fields that are written only when used; a document without pages saves exactly as before, and upstream's reader keeps what it doesn't know in `Document::extra` instead of dropping it. Open details: which `format` header and `generator` string our files carry (`"drawcraft"` makes upstream treat the file as old and rewrite it as `.vectorcraft` on save), and the default Save As extension. |
 | D3 | **Crate and branch layout.** | Don't rename `vectorcraft-*` crates (the CADCraft rename to `cadcraft-model` was cancelled for the same reason: it split names across branches and made every upstream merge conflict). New work goes in new crates and new files beside upstream's. |
 | D4 | **`.cdr` source of truth and licence.** | See section 4. Owner's call. |
 | D5 | **Pages.** VectorCraft has `Document.artboards` (Illustrator model). CorelDRAW has pages with master layers. | Add pages beside artboards, as a document-level mode, not a rewrite. See section 3. |
 | D6 | **Upstream.** | Anything that is not specific to Corel (pages, Shaping commands, dimension tools, `.cdr` reader if its licence allows) is built on `withshalom/vectorcraft` (`draw-mode`, `cdr`) and offered as its own PR; `drawcraft` here is the integration branch that merges it. |
-| D7 | **Branding of builds.** The ArtCraft name, wordmark and logos in `docs/brand/` are trademarks, not open source (`docs/brand/LICENSE-brand.txt`): they may not be modified or used outside VectorCraft. | A released DRAWcraft build can't carry them. Before the first release: our own name, icon and About window, and a decision on "built by the ArtCraft team" wording. The packaging identifiers (`ai.storyteller.vectorcraft`, MIME type, file associations) need DRAWcraft's own, or installing both apps makes them fight over `.drawcraft`. Not blocking P1. |
+| D7 | **Branding of builds.** The ArtCraft name, wordmark and logos in `docs/brand/` are trademarks, not open source (`docs/brand/LICENSE-brand.txt`): they may not be modified or used outside VectorCraft. | A released DRAWCraft build can't carry them. Before the first release: our own name, icon and About window, and a decision on "built by the ArtCraft team" wording. The packaging identifiers (`ai.storyteller.vectorcraft`, MIME type, file associations) need DRAWCraft's own, or installing both apps makes them fight over `.drawcraft`. Not blocking P1. |
 
 ## 3. Product gaps against a CorelDRAW-class app
 
@@ -152,7 +152,7 @@ measurements.
 
 ## 7. What's built
 
-**Branding (2026-10-28).** The product is DRAWcraft in what people see: the README, the web page, the window
+**Branding (2026-10-28).** The product is DRAWCraft in what people see: the README, the web page, the window
 title, the app bar, the About box, the macOS app menu, and every interface string that says the product's name.
 That last one is one function, `vectorcraft_ui_egui::i18n::brand`: the English source strings and the 25
 translation catalogs stay upstream's word for word ("VectorCraft"), and the name is swapped as text is looked up,
@@ -162,13 +162,13 @@ team (upstream's "Part of ArtCraft" isn't true of a fork; its 24 translations we
 English everywhere until it is translated). Crates, binaries, packages, app ids, the preferences folder, the MCP
 server's name and the PDF producer string keep upstream's names for now (D7).
 
-**Icon.** An engraved knight's helm on DRAWcraft blue (`#2d5c9e`), generated in code by
+**Icon.** An engraved knight's helm on DRAWCraft blue (`#2d5c9e`), generated in code by
 `packaging/knight-icon.py`, in the same three-colour template as upstream's dragon; every icon file was regenerated
 at its old path, so packaging is unchanged (`assets/app-icon/README.md`).
 
 **`.drawcraft` files.** Native files save as `.drawcraft` (`vectorcraft_format::SAVE_EXTENSION`; `.vectorcraft`
 still opens and can be chosen). Inside they are VectorCraft files: `"format": "vectorcraft"`, format version 4,
-`"generator": "DRAWcraft <version>"`. Upstream reads them as current files. Opening a `.drawcraft` file in DRAWcraft
+`"generator": "DRAWCraft <version>"`. Upstream reads them as current files. Opening a `.drawcraft` file in DRAWCraft
 treats it as old only when its contents are old (version below 4, or upstream's old `"format": "drawcraft"`
 header), not because of its name.
 
@@ -202,10 +202,10 @@ field that master art can hold, and the canvas laying pages out in order.
 - Follow `CLAUDE.md`: clean-room, no panics, everything a command, layering, assets listed in `ASSETS.md`, one
   task id per commit, `cargo xtask ci` before every commit. (`CLAUDE.md` names a `cargo xtask cleanroom` check
   that this checkout's xtask doesn't have; the check that exists is `cargo xtask brands`, now with Corel's names.)
-- `main` is DRAWcraft itself: upstream's `main` merged in regularly, plus the identity and the Pages workflow.
+- `main` is DRAWCraft itself: upstream's `main` merged in regularly, plus the identity and the Pages workflow.
   Branch `drawcraft` is the identity on its own; `draw-mode` and `cdr` here merge `main` and their namesakes in
   the vectorcraft repo; `web` merges `draw-mode`. Upstream's code is never edited here except for identity.
-- Features are written on the vectorcraft repo first; only DRAWcraft's identity is written here.
+- Features are written on the vectorcraft repo first; only DRAWCraft's identity is written here.
 - Adobe compatibility is a regression gate: the existing `.ai`, EPS, PDF and SVG tests must pass unchanged on this
   branch, and the Illustrator layout stays the default workspace.
 - Update `docs/file-format-parity.md` (the `CorelDRAW .cdr` row), `docs/gaps.md` and `docs/roadmap.md` when a stage lands.
@@ -215,9 +215,9 @@ field that master art can hold, and the canvas laying pages out in order.
 | Date | Change |
 |---|---|
 | 2026-10-28 | First version: goal, decisions, gaps, `.cdr` options and stages, phases |
-| 2026-10-28 | Owner decided D1 (product DRAWcraft, extension `.drawcraft`) and D2 (same format as `.vectorcraft`, no version bump). Added D7 (branding). P0: Corel clean-room rules in `CLAUDE.md` and `AGENTS.md`, Corel names in `cargo xtask brands`. Command names must be our own words. EPS test `coreldraw_files_read_as_vectors`: its procedure names are Corel-style, and the repo's shallow history can't show what it was written from; it is upstream's file, left as it is, to ask upstream about if it matters. |
+| 2026-10-28 | Owner decided D1 (product DRAWCraft, extension `.drawcraft`) and D2 (same format as `.vectorcraft`, no version bump). Added D7 (branding). P0: Corel clean-room rules in `CLAUDE.md` and `AGENTS.md`, Corel names in `cargo xtask brands`. Command names must be our own words. EPS test `coreldraw_files_read_as_vectors`: its procedure names are Corel-style, and the repo's shallow history can't show what it was written from; it is upstream's file, left as it is, to ask upstream about if it matters. |
 | 2026-10-29 | Owner approved Draw mode (Illustrate and Draw modes, page bar, swatch strip) from the vectorcraft repo's `draw-mode`; merged into `main` here. |
 | 2026-10-28 | Owner moved `main` up to the identity branch plus the Pages workflow (it had been an untouched mirror); `web` kept for `draw-mode`. |
 | 2026-10-28 | Page model changed after counting artboard uses: a page is an artboard, plus an optional side table for page order, master layers and per-page layers. |
-| 2026-10-28 | Section 7 (what's built): DRAWcraft branding through one name swap at lookup, the knight icon, `.drawcraft` as the save extension, the first pages slice (page table, master layers repeated in output, six commands), the GitHub Pages web build. Phase statuses added. |
-| 2026-10-28 | Owner split the work into two repositories: DRAWcraft's identity on `withshalom/drawcraft` (`drawcraft`, `web`), the features on `withshalom/vectorcraft` (`draw-mode`, `cdr`). The name is spelled DRAWcraft. Web build moved to a `web` branch, as on the CADCraft fork. |
+| 2026-10-28 | Section 7 (what's built): DRAWCraft branding through one name swap at lookup, the knight icon, `.drawcraft` as the save extension, the first pages slice (page table, master layers repeated in output, six commands), the GitHub Pages web build. Phase statuses added. |
+| 2026-10-28 | Owner split the work into two repositories: DRAWCraft's identity on `withshalom/drawcraft` (`drawcraft`, `web`), the features on `withshalom/vectorcraft` (`draw-mode`, `cdr`). The name is spelled DRAWCraft. Web build moved to a `web` branch, as on the CADCraft fork. |

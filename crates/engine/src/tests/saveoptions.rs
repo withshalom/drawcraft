@@ -58,7 +58,7 @@ fn three_artboards_give_four_files() {
     // No path: the bytes of every file.
     let r = s.execute("file.saveCopy", &json!({"separateArtboards": true})).unwrap();
     let names: Vec<&str> = r["files"].as_array().unwrap().iter().map(|f| f["name"].as_str().unwrap()).collect();
-    // DRAWcraft: native files are .drawcraft.
+    // DRAWCraft: native files are .drawcraft.
     assert_eq!(names, ["Poster copy.drawcraft", "Poster copy-A.drawcraft", "Poster copy-B.drawcraft", "Poster copy-C.drawcraft"]);
     assert!(vectorcraft_format::sniff(&bytes_of(&r["files"][3]["dataBase64"])));
 }

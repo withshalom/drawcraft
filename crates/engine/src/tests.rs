@@ -87,7 +87,7 @@ mod livecorners;
 mod maskview;
 pub(super) mod menucmds;
 mod nativefile;
-// DRAWcraft: `.drawcraft` files.
+// DRAWCraft: `.drawcraft` files.
 mod drawcraft_files;
 mod newart;
 mod newdoc;

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Draw DRAWcraft's app icon: an engraved knight's helm on a full-bleed tile.
+"""Draw DRAWCraft's app icon: an engraved knight's helm on a full-bleed tile.
 
-Original artwork made for DRAWcraft (MIT OR Apache-2.0), generated in code so its provenance is this
+Original artwork made for DRAWCraft (MIT OR Apache-2.0), generated in code so its provenance is this
 file. It follows the Crafting Apps icon template (assets/app-icon/README.md): a head-and-shoulders
 portrait in three colours (ink, paper, the app's colour), a 512 viewBox and a rounded tile (rx 112).
 The shading is engraving: lines that swell from a highlight into the shadow, never filled tones.
@@ -16,7 +16,7 @@ import sys
 
 INK = "#0b0b0c"
 PAPER = "#efe9dc"
-FIELD = "#2d5c9e"  # DRAWcraft's colour: heraldic azure
+FIELD = "#2d5c9e"  # DRAWCraft's colour: heraldic azure
 
 out = []
 defs = []

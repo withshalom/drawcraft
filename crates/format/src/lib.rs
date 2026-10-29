@@ -64,12 +64,12 @@ pub const PREVIEW_MAX: u32 = 256;
 pub const EXTENSION: &str = "vectorcraft";
 /// Extension and format name from before the project was renamed (DrawCraft): still opened.
 pub const LEGACY_EXTENSION: &str = "drawcraft";
-/// The extension DRAWcraft saves native files under: upstream's former name, which every
+/// The extension DRAWCraft saves native files under: upstream's former name, which every
 /// VectorCraft still opens. The `format` header stays [`EXTENSION`], so VectorCraft reads these
 /// files as current ones, not as old `.drawcraft` files.
 pub const SAVE_EXTENSION: &str = LEGACY_EXTENSION;
 /// The product written in each file's `generator` field.
-pub const PRODUCT: &str = "DRAWcraft";
+pub const PRODUCT: &str = "DRAWCraft";
 /// Most bytes the JSON of a compressed file may unpack to (a guard against decompression bombs,
 /// as are [`MAX_BLOB`] and [`MAX_BLOBS`]). A compressed save refuses a document past any of them,
 /// so every file VectorCraft writes reads back. On wasm32 the cap is a quarter of the native

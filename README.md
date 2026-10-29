@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/images/drawcraft-logo-dark.svg">
-    <img src="docs/images/drawcraft-logo.svg" height="140" alt="DRAWcraft: an engraved knight's helm with a feathered plume on a blue tile, beside the name DRAWcraft with DRAW in bold capitals">
+    <img src="docs/images/drawcraft-logo.svg" height="140" alt="DRAWCraft: an engraved knight's helm with a feathered plume on a blue tile, beside the name DRAWCraft with DRAW in bold capitals">
   </picture>
 </p>
 
@@ -23,7 +23,7 @@
 </p>
 
 <p align="center">
-  <a href="https://withshalom.github.io/drawcraft/"><b>Try DRAWcraft in your browser</b></a> ·
+  <a href="https://withshalom.github.io/drawcraft/"><b>Try DRAWCraft in your browser</b></a> ·
   <a href="docs/drawcraft-plan.md">The plan</a> ·
   <a href="#status">Status</a> ·
   <a href="#quick-start">Quick start</a> ·
@@ -32,15 +32,15 @@
 </p>
 
 > [!NOTE]
-> **DRAWcraft is a fork.** It's [VectorCraft](https://github.com/storytold/vectorcraft), the ArtCraft team's
+> **DRAWCraft is a fork.** It's [VectorCraft](https://github.com/storytold/vectorcraft), the ArtCraft team's
 > open-source vector illustration app, grown in a new direction by [WithShalom Studios](https://github.com/withshalom).
 > It is not made, endorsed or supported by the ArtCraft team, and it is not affiliated with Corel. CorelDRAW,
 > Illustrator and the other product names here are their owners' trademarks, used only to say which files and
-> workflows DRAWcraft works with.
+> workflows DRAWCraft works with.
 
-## What DRAWcraft is for
+## What DRAWCraft is for
 
-VectorCraft follows the workflow of an illustration app: one canvas, artboards, live appearance. DRAWcraft keeps
+VectorCraft follows the workflow of an illustration app: one canvas, artboards, live appearance. DRAWCraft keeps
 all of that, and every file VectorCraft reads and writes, and adds the things a sign shop, a laser or vinyl
 cutter, an engraver or a print shop reaches for in apps like CorelDRAW:
 
@@ -66,7 +66,7 @@ the fallback); files you open stay on your machine. Use a current Chrome, Edge, 
 
 ## A look around
 
-These screenshots are of VectorCraft, which today's DRAWcraft matches feature for feature.
+These screenshots are of VectorCraft, which today's DRAWCraft matches feature for feature.
 
 <table>
 <tr>
@@ -95,7 +95,7 @@ These screenshots are of VectorCraft, which today's DRAWcraft matches feature fo
 
 | | Opens | Saves or exports |
 |---|---|---|
-| **DRAWcraft** `.drawcraft` | yes | yes (the native format) |
+| **DRAWCraft** `.drawcraft` | yes | yes (the native format) |
 | VectorCraft `.vectorcraft` | yes | yes |
 | SVG / SVGZ, PDF (PDF/X), EPS, DXF, EMF / WMF | yes | yes |
 | Illustrator `.ai` | yes (the PDF part and the structure of the editing data) | yes (PDF-compatible, or legacy version 7 with layers and groups) |
@@ -104,11 +104,11 @@ These screenshots are of VectorCraft, which today's DRAWcraft matches feature fo
 | CorelDRAW `.cdr` | **planned** ([plan § 4](docs/drawcraft-plan.md#4-opening-cdr-files)) | no (exports Corel-readable PDF, SVG, EPS, `.ai`, EMF and DXF instead) |
 
 **One format, two names.** `.drawcraft` was VectorCraft's own extension before it was renamed, and every
-VectorCraft still opens it. DRAWcraft takes the name back for the same format: a `.drawcraft` file is a
-VectorCraft document, so DRAWcraft and VectorCraft open each other's files, and DRAWcraft's additions (pages,
+VectorCraft still opens it. DRAWCraft takes the name back for the same format: a `.drawcraft` file is a
+VectorCraft document, so DRAWCraft and VectorCraft open each other's files, and DRAWCraft's additions (pages,
 master layers) are extra data that VectorCraft keeps without reading. Details: [file-format-parity.md](docs/file-format-parity.md).
 
-## Why DRAWcraft
+## Why DRAWCraft
 
 - **Fast.** Multithreaded SIMD rendering off the UI thread. 20,000 shapes render in about 27 ms at full retina
   resolution while the interface stays at 120 fps.
@@ -135,8 +135,8 @@ cd apps/vectorcraft-web && trunk build --release            # web build → dist
 cargo xtask ci                                            # fmt, clippy, tests, layering, wasm, vendor names
 ```
 
-The crates, binaries and packages keep VectorCraft's names (`vectorcraft-*`) so that DRAWcraft can keep merging
-VectorCraft's work; the product name, icon and file extension are DRAWcraft's. Fonts, graphics processors, Wayland
+The crates, binaries and packages keep VectorCraft's names (`vectorcraft-*`) so that DRAWCraft can keep merging
+VectorCraft's work; the product name, icon and file extension are DRAWCraft's. Fonts, graphics processors, Wayland
 and Windows 7: see [`docs/development.md`](docs/development.md).
 
 ### Use it from Claude Code and other agents
@@ -150,7 +150,7 @@ The details are in [`docs/mcp.md`](docs/mcp.md) and [`docs/control-protocol.md`]
 
 ## Status
 
-**DRAWcraft is at its start (2026-10-29).** It is VectorCraft with DRAWcraft's name, icon and file extension,
+**DRAWCraft is at its start (2026-10-29).** It is VectorCraft with DRAWCraft's name, icon and file extension,
 a web build, the clean-room and naming rules for Corel's software, and two layouts:
 
 - **Illustrate** (the default): VectorCraft's Illustrator-style layout, unchanged.
@@ -176,28 +176,28 @@ code, quality gates) are in [`AGENTS.md`](AGENTS.md). Every bundled asset is lis
 
 ## Built on VectorCraft
 
-DRAWcraft would not exist without [VectorCraft](https://github.com/storytold/vectorcraft) and the
+DRAWCraft would not exist without [VectorCraft](https://github.com/storytold/vectorcraft) and the
 [ArtCraft](https://getartcraft.com/) team's other Crafting Apps, whose engine, renderer, file formats and
-interface it inherits. DRAWcraft merges VectorCraft's `main` regularly. Its features (pages and master layers,
+interface it inherits. DRAWCraft merges VectorCraft's `main` regularly. Its features (pages and master layers,
 draw-mode tools and layout, dimensioning, `.cdr` files) are built in VectorCraft's own terms on the
 [`draw-mode`](https://github.com/withshalom/vectorcraft/tree/draw-mode) and
 [`cdr`](https://github.com/withshalom/vectorcraft/tree/cdr) branches of
 [withshalom/vectorcraft](https://github.com/withshalom/vectorcraft), to be offered to VectorCraft as pull requests,
-and merged here under DRAWcraft's name. If you want the illustration app itself, use VectorCraft.
+and merged here under DRAWCraft's name. If you want the illustration app itself, use VectorCraft.
 
 ## License and credits
 
-DRAWcraft, like VectorCraft, is dual-licensed under [MIT](LICENSE-MIT) or [Apache-2.0](LICENSE-APACHE), at your
-option. Copyright (c) 2026 ArtCraft Team and the VectorCraft contributors, and the DRAWcraft contributors.
+DRAWCraft, like VectorCraft, is dual-licensed under [MIT](LICENSE-MIT) or [Apache-2.0](LICENSE-APACHE), at your
+option. Copyright (c) 2026 ArtCraft Team and the VectorCraft contributors, and the DRAWCraft contributors.
 Required notices are in [NOTICE](NOTICE).
 
 Bundled fonts, icons, images and other assets keep their own open licenses; each one is listed with its author,
 source and license in [ASSETS.md](ASSETS.md).
 
-The app icon (an engraved knight's helm on DRAWcraft blue, `#2d5c9e`) is original artwork for DRAWcraft, generated
+The app icon (an engraved knight's helm on DRAWCraft blue, `#2d5c9e`) is original artwork for DRAWCraft, generated
 in code by [`packaging/knight-icon.py`](packaging/knight-icon.py); its palette and files are in
 [`assets/app-icon/`](assets/app-icon/README.md).
 
 The ArtCraft name, wordmark and logos are trademarks of the ArtCraft Team. Under
-[`docs/brand/LICENSE-brand.txt`](docs/brand/LICENSE-brand.txt), forks must remove them, so DRAWcraft doesn't show
+[`docs/brand/LICENSE-brand.txt`](docs/brand/LICENSE-brand.txt), forks must remove them, so DRAWCraft doesn't show
 them; the files stay in `docs/brand/` only because they are upstream's.

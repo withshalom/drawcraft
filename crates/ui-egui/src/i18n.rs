@@ -569,9 +569,9 @@ pub fn t(s: &str) -> &str {
 
 /// The product's name as the interface shows it.
 ///
-/// DRAWcraft keeps upstream VectorCraft's English source strings and translation catalogs as
+/// DRAWCraft keeps upstream VectorCraft's English source strings and translation catalogs as
 /// they are, so they keep merging cleanly, and swaps the name as text is looked up ([`brand`]).
-pub const PRODUCT_NAME: &str = "DRAWcraft";
+pub const PRODUCT_NAME: &str = "DRAWCraft";
 
 /// Upstream's name, as the source strings and catalogs say it.
 const UPSTREAM_NAME: &str = "VectorCraft";

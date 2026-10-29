@@ -3,16 +3,16 @@ use super::*;
 
 const ZH: fn() -> Lang = || Lang::from_code("zh-hant").expect("zh-hant registered");
 
-/// DRAWcraft: the interface says the product's name wherever upstream's strings say "VectorCraft",
+/// DRAWCraft: the interface says the product's name wherever upstream's strings say "VectorCraft",
 /// in English and in the catalogs, while names inside file names and the credits stay as written.
 #[test]
 fn the_product_name_is_swapped_as_text_is_looked_up() {
     let en = Lang::from_code("en").expect("en registered");
     let de = Lang::from_code("de").expect("de registered");
-    assert_eq!(tr(en, "About VectorCraft"), "About DRAWcraft");
-    assert_eq!(tr(de, "Quit VectorCraft"), "DRAWcraft beenden");
-    assert_eq!(brand("Made by VectorCraft."), "Made by DRAWcraft.");
-    assert_eq!(brand("VectorCraft, VectorCraft"), "DRAWcraft, DRAWcraft");
+    assert_eq!(tr(en, "About VectorCraft"), "About DRAWCraft");
+    assert_eq!(tr(de, "Quit VectorCraft"), "DRAWCraft beenden");
+    assert_eq!(brand("Made by VectorCraft."), "Made by DRAWCraft.");
+    assert_eq!(brand("VectorCraft, VectorCraft"), "DRAWCraft, DRAWCraft");
     for kept in ["VectorCraft-logo.svg", "old/VectorCraft.svg", "MyVectorCraft", "VectorCraft_2", "no name here"] {
         assert_eq!(brand(kept), kept);
     }
@@ -23,7 +23,7 @@ fn the_product_name_is_swapped_as_text_is_looked_up() {
     assert_eq!(tr(de, "VectorCraft on getartcraft.com"), "VectorCraft auf getartcraft.com");
     // The same string comes back as the same text every frame, without another copy.
     assert!(std::ptr::eq(brand("Quit VectorCraft"), brand("Quit VectorCraft")));
-    assert_eq!(message(en, "Loading VectorCraft…"), "Loading DRAWcraft…");
+    assert_eq!(message(en, "Loading VectorCraft…"), "Loading DRAWCraft…");
 }
 
 #[test]
@@ -1768,7 +1768,7 @@ fn as_template(s: &str) -> String {
 #[test]
 fn render_site_labels_fall_back_to_english() {
     for (_, source) in RENDER_SITE_ROWS.iter().filter(|(ctx, _)| *ctx == "file-filter") {
-        // In English, with the product's name (DRAWcraft).
+        // In English, with the product's name (DRAWCraft).
         assert_eq!(tr_ctx(Lang::EN, "file-filter", source), brand(source));
     }
     for source in ["SVG", "PNG", "VectorCraft", "unregistered filter"] {

@@ -325,7 +325,7 @@ pub const FORMATS: &[Format] = &[
     Format {
         id: "vectorcraft",
         label: "VectorCraft",
-        // DRAWcraft saves `.drawcraft` (the first extension is the one written); `.vectorcraft`
+        // DRAWCraft saves `.drawcraft` (the first extension is the one written); `.vectorcraft`
         // still opens and can be chosen. The label is shown with the product's name.
         extensions: &[vectorcraft_format::SAVE_EXTENSION, vectorcraft_format::EXTENSION],
         mime: "application/json",

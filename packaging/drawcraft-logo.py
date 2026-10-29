@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Draw DRAWcraft's logo: the app icon beside the wordmark "DRAWcraft", DRAW in capitals.
+"""Draw DRAWCraft's logo: the app icon beside the wordmark "DRAWCraft", DRAW in capitals.
 
-Original artwork made for DRAWcraft (MIT OR Apache-2.0). The wordmark is set in Source Sans 3 (the app's
+Original artwork made for DRAWCraft (MIT OR Apache-2.0). The wordmark is set in Source Sans 3 (the app's
 own interface face, SIL Open Font License 1.1, assets/fonts/OFL-SourceSans3.txt), Bold for DRAW and Regular
-for craft, and converted to outlines, so the logo needs no font to show. The icon is
+for Craft, and converted to outlines, so the logo needs no font to show. The icon is
 assets/app-icon/vectorcraft.svg (packaging/knight-icon.py).
 
     python3 packaging/drawcraft-logo.py
@@ -66,11 +66,11 @@ def logo(type_colour):
     bold = os.path.join(ROOT, "assets/fonts/SourceSans3-Bold.ttf")
     regular = os.path.join(ROOT, "assets/fonts/SourceSans3-Regular.ttf")
     d_draw, w_draw = word(bold, "DRAW", x, baseline, CAP)
-    d_craft, w_craft = word(regular, "craft", x + w_draw + CAP * 0.04, baseline, CAP)
+    d_craft, w_craft = word(regular, "Craft", x + w_draw + CAP * 0.04, baseline, CAP)
     width = int(x + w_draw + CAP * 0.04 + w_craft + 8)
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {ICON}" width="{width}" height="{ICON}">'
-        f"<title>DRAWcraft</title>{inner.strip()}"
+        f"<title>DRAWCraft</title>{inner.strip()}"
         f'<path d="{d_draw}" fill="{type_colour}"/><path d="{d_craft}" fill="{type_colour}"/></svg>\n'
     )
 
