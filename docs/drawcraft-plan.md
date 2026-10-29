@@ -1,6 +1,6 @@
 # DRAWcraft: plan for a CorelDRAW-class product on VectorCraft
 
-> **Last reviewed:** 2026-10-28 · **Last updated:** 2026-10-28 · **Change:** minor (`main` is now the DRAWcraft app and publishes the web build; two repositories: product here, features on `withshalom/vectorcraft`; DRAWcraft spelling; `web` branch; previously: section 7, what's built: branding, icon, `.drawcraft` saving, pages first slice, web build; previously: the page model is an artboard plus a side table, not a second rectangle type; owner's decisions D1 and D2 recorded; P0 rules added; the "no version bump" format rule and our own command names corrected from the first version)
+> **Last reviewed:** 2026-10-29 · **Last updated:** 2026-10-29 · **Change:** minor (Draw mode merged into `main`; previously: `main` is now the DRAWcraft app and publishes the web build; two repositories: product here, features on `withshalom/vectorcraft`; DRAWcraft spelling; `web` branch; previously: section 7, what's built: branding, icon, `.drawcraft` saving, pages first slice, web build; previously: the page model is an artboard plus a side table, not a second rectangle type; owner's decisions D1 and D2 recorded; P0 rules added; the "no version bump" format rule and our own command names corrected from the first version)
 
 Branch `drawcraft` of `withshalom/drawcraft`. Written 2026-10-28. A plan and a list of decisions for the owner.
 
@@ -14,9 +14,9 @@ as pull requests: `draw-mode` (pages, master layers, draw-mode tools and layout,
 |---|---|
 | `main` | the DRAWcraft app: upstream's `main` plus DRAWcraft's identity (name, logo, icon, `.drawcraft` files, README) and the Pages workflow; published at <https://withshalom.github.io/drawcraft/> |
 | `drawcraft` | the identity commits on their own, on top of upstream's `main` (`main` was moved up to here) |
-| `draw-mode` | `drawcraft` with the vectorcraft repo's `draw-mode` merged |
+| `draw-mode` | `drawcraft` with the vectorcraft repo's `draw-mode` merged; merged into `main` when the owner approves it (first on 2026-10-29: Illustrate and Draw modes, page bar, swatch strip) |
 | `cdr` | `draw-mode` here with the vectorcraft repo's `cdr` merged |
-| `web` | `draw-mode` here plus the Pages workflow: <https://withshalom.github.io/drawcraft/> | Claims about the `.cdr` format and about libcdr come from public
+| `web` | `draw-mode` here plus the Pages workflow (`main` publishes the same address) | Claims about the `.cdr` format and about libcdr come from public
 package listings and general knowledge and are marked **unverified** until checked against a primary source.
 
 ## 1. Goal and what it does not mean
@@ -216,6 +216,7 @@ field that master art can hold, and the canvas laying pages out in order.
 |---|---|
 | 2026-10-28 | First version: goal, decisions, gaps, `.cdr` options and stages, phases |
 | 2026-10-28 | Owner decided D1 (product DRAWcraft, extension `.drawcraft`) and D2 (same format as `.vectorcraft`, no version bump). Added D7 (branding). P0: Corel clean-room rules in `CLAUDE.md` and `AGENTS.md`, Corel names in `cargo xtask brands`. Command names must be our own words. EPS test `coreldraw_files_read_as_vectors`: its procedure names are Corel-style, and the repo's shallow history can't show what it was written from; it is upstream's file, left as it is, to ask upstream about if it matters. |
+| 2026-10-29 | Owner approved Draw mode (Illustrate and Draw modes, page bar, swatch strip) from the vectorcraft repo's `draw-mode`; merged into `main` here. |
 | 2026-10-28 | Owner moved `main` up to the identity branch plus the Pages workflow (it had been an untouched mirror); `web` kept for `draw-mode`. |
 | 2026-10-28 | Page model changed after counting artboard uses: a page is an artboard, plus an optional side table for page order, master layers and per-page layers. |
 | 2026-10-28 | Section 7 (what's built): DRAWcraft branding through one name swap at lookup, the knight icon, `.drawcraft` as the save extension, the first pages slice (page table, master layers repeated in output, six commands), the GitHub Pages web build. Phase statuses added. |

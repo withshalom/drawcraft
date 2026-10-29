@@ -150,13 +150,19 @@ The details are in [`docs/mcp.md`](docs/mcp.md) and [`docs/control-protocol.md`]
 
 ## Status
 
-**DRAWcraft is at its start (2026-10-28).** Today it is VectorCraft with DRAWcraft's name, icon and file
-extension, a web build, and the clean-room and naming rules for Corel's software. The `draw-mode` branch (and
-the `web` branch, which publishes it too) adds the first slice of pages: a document can use pages, insert and reorder
-them, and make layers master layers whose art repeats on every page in export, print and on the canvas. Those
-are commands for now (search the command palette for "Pages" or "Master Layer", or use them over MCP); the Pages
-panel and a Layout menu come next, then `.cdr` reading on the `cdr` branch. What's built
-and what's next are in [the plan](docs/drawcraft-plan.md#7-whats-built).
+**DRAWcraft is at its start (2026-10-29).** It is VectorCraft with DRAWcraft's name, icon and file extension,
+a web build, the clean-room and naming rules for Corel's software, and two layouts:
+
+- **Illustrate** (the default): VectorCraft's Illustrator-style layout, unchanged.
+- **Draw**: a page-based layout. Switch with **Illustrate | Draw** at the top right, or Window › Mode. Draw shows the
+  Control bar and the rulers, puts Layers in front, adds a **page bar** at the bottom (page navigation, Add Page, a
+  tab per page: click to go, double-click to rename, drag to reorder, right-click to insert, move or delete) and a
+  **swatch strip** at the right edge (click a colour for the fill, right-click for the stroke).
+
+Pages are artboards in a page order, and a layer can be a master layer whose art repeats on every page in export,
+print and on the canvas (search the command palette for "Master Layer"). The Layers panel's master-layer marks, a
+Pages panel and a Layout menu come next, then `.cdr` reading on the `cdr` branch. What's built and what's next are
+in [the plan](docs/drawcraft-plan.md#7-whats-built) and in the vectorcraft repo's `docs/draw-mode.md`.
 
 Everything inherited from VectorCraft is where VectorCraft is: **alpha**, with about 88% of an illustration app's
 menu items, tools, effects and formats present and feature depth around 75% (VectorCraft's own, self-assessed
