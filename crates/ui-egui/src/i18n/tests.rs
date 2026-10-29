@@ -3,6 +3,29 @@ use super::*;
 
 const ZH: fn() -> Lang = || Lang::from_code("zh-hant").expect("zh-hant registered");
 
+/// DRAWcraft: the interface says the product's name wherever upstream's strings say "VectorCraft",
+/// in English and in the catalogs, while names inside file names and the credits stay as written.
+#[test]
+fn the_product_name_is_swapped_as_text_is_looked_up() {
+    let en = Lang::from_code("en").expect("en registered");
+    let de = Lang::from_code("de").expect("de registered");
+    assert_eq!(tr(en, "About VectorCraft"), "About DRAWcraft");
+    assert_eq!(tr(de, "Quit VectorCraft"), "DRAWcraft beenden");
+    assert_eq!(brand("Made by VectorCraft."), "Made by DRAWcraft.");
+    assert_eq!(brand("VectorCraft, VectorCraft"), "DRAWcraft, DRAWcraft");
+    for kept in ["VectorCraft-logo.svg", "old/VectorCraft.svg", "MyVectorCraft", "VectorCraft_2", "no name here"] {
+        assert_eq!(brand(kept), kept);
+    }
+    assert_eq!(brand(CREDITS), CREDITS);
+    assert_eq!(tr(de, CREDITS), CREDITS, "no catalog translates the credits yet");
+    // Upstream's own page keeps upstream's name, translated or not.
+    assert_eq!(tr(en, "VectorCraft on getartcraft.com"), "VectorCraft on getartcraft.com");
+    assert_eq!(tr(de, "VectorCraft on getartcraft.com"), "VectorCraft auf getartcraft.com");
+    // The same string comes back as the same text every frame, without another copy.
+    assert!(std::ptr::eq(brand("Quit VectorCraft"), brand("Quit VectorCraft")));
+    assert_eq!(message(en, "Loading VectorCraft…"), "Loading DRAWcraft…");
+}
+
 #[test]
 fn tags_map_to_languages() {
     assert_eq!(lang_from_tag("en_US.UTF-8"), Some(Lang::EN));
@@ -312,7 +335,7 @@ fn language_command_sets_the_preference() {
     // Every registered language is in the Mac App menu's Language, by its own name (the in-window
     // bar has no Language menu).
     let layout = crate::native_menu::mac_layout(&app, &crate::native_menu::from_tree(&app, &crate::menus::menu_tree()), Lang::EN);
-    let app_menu = layout.bar.menus.into_iter().find(|m| m.title == "VectorCraft").expect("App menu");
+    let app_menu = layout.bar.menus.into_iter().find(|m| m.title == PRODUCT_NAME).expect("App menu");
     fn items(nodes: &[crate::native_menu::Node], out: &mut Vec<String>) {
         for n in nodes {
             match n {
@@ -1745,7 +1768,8 @@ fn as_template(s: &str) -> String {
 #[test]
 fn render_site_labels_fall_back_to_english() {
     for (_, source) in RENDER_SITE_ROWS.iter().filter(|(ctx, _)| *ctx == "file-filter") {
-        assert_eq!(tr_ctx(Lang::EN, "file-filter", source), *source);
+        // In English, with the product's name (DRAWcraft).
+        assert_eq!(tr_ctx(Lang::EN, "file-filter", source), brand(source));
     }
     for source in ["SVG", "PNG", "VectorCraft", "unregistered filter"] {
         assert_eq!(tr_ctx(cs(), "file-filter", source), tr(cs(), source));

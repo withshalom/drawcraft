@@ -567,14 +567,98 @@ pub fn t(s: &str) -> &str {
     tr(current(), s)
 }
 
-/// Translate an English UI string; unknown strings come back unchanged.
+/// The product's name as the interface shows it.
+///
+/// DRAWcraft keeps upstream VectorCraft's English source strings and translation catalogs as
+/// they are, so they keep merging cleanly, and swaps the name as text is looked up ([`brand`]).
+pub const PRODUCT_NAME: &str = "DRAWcraft";
+
+/// Upstream's name, as the source strings and catalogs say it.
+const UPSTREAM_NAME: &str = "VectorCraft";
+
+/// The About box's credits. They name upstream on purpose, so [`brand`] leaves them as written;
+/// no catalog translates them yet (upstream's "Part of ArtCraft…" line isn't true of a fork, and
+/// its translations went with it).
+pub const CREDITS: &str = "Built on VectorCraft by the ArtCraft team. MIT OR Apache-2.0. Fonts: Source Sans 3, Inter, JetBrains Mono (OFL). Icons: Lucide (ISC) + VectorCraft.";
+
+/// Strings that name upstream on purpose: shown as written. Upstream's page on getartcraft.com is
+/// VectorCraft's (Help and the start page link it).
+const NAMES_UPSTREAM: &[&str] = &[CREDITS, "VectorCraft on getartcraft.com"];
+
+/// Most distinct strings [`brand`] keeps a renamed copy of; past it, strings show as they are.
+const MAX_BRANDED: usize = 4096;
+
+/// `s` with each whole-word mention of [`UPSTREAM_NAME`] replaced by [`PRODUCT_NAME`]; `s` itself
+/// when it has none. "Whole word" leaves names inside file names alone (`VectorCraft-logo.svg`).
+/// Renamed copies are made once per distinct string and kept for the life of the process (the
+/// interface asks for the same labels every frame), up to [`MAX_BRANDED`] of them.
+pub fn brand(s: &str) -> &str {
+    if !s.contains(UPSTREAM_NAME) || NAMES_UPSTREAM.contains(&s) {
+        return s;
+    }
+    static CACHE: std::sync::Mutex<Option<std::collections::HashMap<String, &'static str>>> = std::sync::Mutex::new(None);
+    let mut cache = CACHE.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+    let map = cache.get_or_insert_with(Default::default);
+    if let Some(done) = map.get(s) {
+        return done;
+    }
+    let renamed = rename(s);
+    if renamed == s || map.len() >= MAX_BRANDED {
+        return s;
+    }
+    let leaked: &'static str = Box::leak(renamed.into_boxed_str());
+    map.insert(s.to_string(), leaked);
+    leaked
+}
+
+/// [`brand`] for an owned message.
+pub fn brand_owned(s: String) -> String {
+    if !s.contains(UPSTREAM_NAME) || NAMES_UPSTREAM.contains(&s.as_str()) { s } else { rename(&s) }
+}
+
+/// The whole-word replacement behind [`brand`].
+fn rename(s: &str) -> String {
+    let part_of_name = |c: char| c.is_alphanumeric() || matches!(c, '-' | '_' | '.' | '/' | '\\');
+    let mut out = String::with_capacity(s.len());
+    let mut rest = s;
+    while let Some(at) = rest.find(UPSTREAM_NAME) {
+        let (before, from) = rest.split_at(at);
+        let after = from.get(UPSTREAM_NAME.len()..).unwrap_or_default();
+        out.push_str(before);
+        let prev = out.chars().next_back();
+        // A full stop after the name ends a sentence ("…by VectorCraft."), unless a file
+        // extension follows it ("VectorCraft.svg").
+        let next_is_name = match after.chars().next() {
+            Some('.') => after.chars().nth(1).is_some_and(char::is_alphanumeric),
+            Some(c) => part_of_name(c),
+            None => false,
+        };
+        if prev.is_some_and(part_of_name) || next_is_name {
+            out.push_str(UPSTREAM_NAME);
+        } else {
+            out.push_str(PRODUCT_NAME);
+        }
+        rest = after;
+    }
+    out.push_str(rest);
+    out
+}
+
+/// Translate an English UI string; unknown strings come back unchanged (both with the product's
+/// name, [`brand`]).
 pub fn tr(lang: Lang, s: &str) -> &str {
-    lang.catalog().plain(s).unwrap_or(s)
+    branded(s, lang.catalog().plain(s).unwrap_or(s))
+}
+
+/// `shown`, the text of the English `source`, with the product's name ([`brand`]), unless the
+/// source names upstream on purpose ([`NAMES_UPSTREAM`]): then in every language as translated.
+fn branded<'a>(source: &str, shown: &'a str) -> &'a str {
+    if NAMES_UPSTREAM.contains(&source) { shown } else { brand(shown) }
 }
 
 /// Like [`tr`], for an English string that needs a disambiguating `context`.
 pub fn tr_ctx<'a>(lang: Lang, context: &str, s: &'a str) -> &'a str {
-    lang.catalog().contextual(context, s).unwrap_or_else(|| tr(lang, s))
+    lang.catalog().contextual(context, s).map(|t| branded(s, t)).unwrap_or_else(|| tr(lang, s))
 }
 
 /// A name the app gives something (a default swatch's), translated where the current language has
@@ -585,7 +669,7 @@ pub fn t_name<'a>(context: &str, name: &'a str) -> &'a str {
 
 /// A string keyed by its command id, falling back to the translation of the English `label`.
 pub fn tr_id<'a>(lang: Lang, id: &str, label: &'a str) -> &'a str {
-    lang.catalog().id(id).unwrap_or_else(|| tr(lang, label))
+    lang.catalog().id(id).map(|t| branded(label, t)).unwrap_or_else(|| tr(lang, label))
 }
 
 /// [`tr_id`] in the current language.
@@ -606,7 +690,7 @@ pub fn fmt(template: &str, args: &[(&str, &str)]) -> String {
 pub fn trn(lang: Lang, n: u64, one: &str, other: &str) -> String {
     let idx = (lang.0.plural)(n);
     let text = lang.catalog().plural(one, other, idx).unwrap_or(if n == 1 { one } else { other });
-    fmt(text, &[("n", &n.to_string())])
+    fmt(brand(text), &[("n", &n.to_string())])
 }
 
 /// An entry of a list that mixes interface labels with names (user, file or system data) as
@@ -626,7 +710,7 @@ const MESSAGE_DEPTH: usize = 5;
 /// Translate a status or error message for display (see the module docs). Unknown messages, and
 /// parts of them (file names, numbers, a reason with no entry), stay as they are.
 pub fn message(lang: Lang, s: &str) -> String {
-    message_at(lang, s, MESSAGE_DEPTH)
+    brand_owned(message_at(lang, s, MESSAGE_DEPTH))
 }
 
 fn message_at(lang: Lang, s: &str, depth: usize) -> String {

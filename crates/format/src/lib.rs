@@ -64,6 +64,12 @@ pub const PREVIEW_MAX: u32 = 256;
 pub const EXTENSION: &str = "vectorcraft";
 /// Extension and format name from before the project was renamed (DrawCraft): still opened.
 pub const LEGACY_EXTENSION: &str = "drawcraft";
+/// The extension DRAWcraft saves native files under: upstream's former name, which every
+/// VectorCraft still opens. The `format` header stays [`EXTENSION`], so VectorCraft reads these
+/// files as current ones, not as old `.drawcraft` files.
+pub const SAVE_EXTENSION: &str = LEGACY_EXTENSION;
+/// The product written in each file's `generator` field.
+pub const PRODUCT: &str = "DRAWcraft";
 /// Most bytes the JSON of a compressed file may unpack to (a guard against decompression bombs,
 /// as are [`MAX_BLOB`] and [`MAX_BLOBS`]). A compressed save refuses a document past any of them,
 /// so every file VectorCraft writes reads back. On wasm32 the cap is a quarter of the native
@@ -388,7 +394,7 @@ pub fn save_to(doc: &Document, o: &SaveOptions, w: impl Write) -> Result<(), For
     // Older apps only know the name from before the rename.
     env.field(&mut out, "format", &if o.version < 3 { LEGACY_EXTENSION } else { EXTENSION })?;
     env.field(&mut out, "version", &o.version)?;
-    env.field(&mut out, "generator", &format!("VectorCraft {}", env!("CARGO_PKG_VERSION")))?;
+    env.field(&mut out, "generator", &format!("{PRODUCT} {}", env!("CARGO_PKG_VERSION")))?;
     if let Some(png) = &o.preview {
         env.field(&mut out, "preview", &blob("image/png", png))?;
     }

@@ -251,7 +251,9 @@ pub fn load_with(name: &str, bytes: &[u8], opts: &LoadOptions) -> Result<Loaded>
         }
         "vectorcraft" | "template" => {
             let (d, info, warnings) = native_file(bytes)?;
-            converted = info.is_old() || super::extension(name) == vectorcraft_format::LEGACY_EXTENSION;
+            // DRAWcraft saves under the `.drawcraft` name, so the name alone doesn't make a file
+            // old: its version or its `"format": "drawcraft"` header does (`FileInfo::is_old`).
+            converted = info.is_old();
             (d, warnings, false)
         }
         "svg" | "svgz" => {

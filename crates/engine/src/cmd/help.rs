@@ -15,9 +15,10 @@ pub fn app_page_url() -> String {
     format!("{WEBSITE_URL}/apps/{APP_ID}")
 }
 
-/// This app's source repository.
+/// This app's source repository: DRAWcraft's (upstream VectorCraft's is
+/// `https://github.com/storytold/vectorcraft`).
 pub fn github_url() -> String {
-    format!("https://github.com/storytold/{APP_ID}")
+    "https://github.com/withshalom/drawcraft/tree/drawcraft".to_string()
 }
 
 pub fn specs() -> Vec<CommandSpec> {
@@ -46,7 +47,7 @@ mod tests {
         let mut s = Session::new();
         assert_eq!(s.execute("help.discord", &json!({})).unwrap()["url"], "https://discord.gg/artcraft");
         assert_eq!(s.execute("help.appPage", &json!({})).unwrap()["url"], "https://getartcraft.com/apps/vectorcraft");
-        assert_eq!(s.execute("help.github", &json!({})).unwrap()["url"], "https://github.com/storytold/vectorcraft");
+        assert_eq!(s.execute("help.github", &json!({})).unwrap()["url"], "https://github.com/withshalom/drawcraft/tree/drawcraft");
         assert_eq!(s.execute("help.links", &json!({})).unwrap()["website"], "https://getartcraft.com");
     }
 }
