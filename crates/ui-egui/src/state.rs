@@ -456,6 +456,12 @@ pub struct UiState {
     /// switching back to it brings them back; Reset <name> drops them.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub workspace_changes: Vec<crate::workspaces::Workspace>,
+    /// Window › Mode: Illustrate (the default layout) or Draw (the page-based one, [`crate::modes`]).
+    #[serde(default)]
+    pub mode: crate::modes::Mode,
+    /// The workspace in use when Draw mode came, brought back when Illustrate mode does.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub mode_restore: Option<String>,
     /// File → Open Recent Files, most recent first.
     #[serde(default)]
     pub recent_files: Vec<String>,
@@ -844,6 +850,8 @@ impl Default for UiState {
             shortcut_overrides: Default::default(),
             shortcut_set: default_shortcut_set(),
             workspace: default_workspace(),
+            mode: crate::modes::Mode::Illustrate,
+            mode_restore: None,
             touch_workspace_restore: None,
             custom_workspaces: vec![],
             workspace_changes: vec![],

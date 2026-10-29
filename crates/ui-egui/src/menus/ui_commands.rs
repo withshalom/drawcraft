@@ -489,6 +489,12 @@ pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
         "",
         "{} reset the current workspace to the way it was saved, dropping the layout changes made in it",
     ),
+    (
+        "window.mode",
+        "Mode",
+        "",
+        "{mode?: illustrate|draw (omitted: the other one)} arrange the window for Illustrate (the default: artboards, panels in the dock) or Draw (pages: the Draw workspace, a page bar above the status bar and a swatch strip at the right edge); switching to Draw remembers the workspace in use and Illustrate brings it back; the document, commands and shortcuts are the same in both → {mode, workspace}",
+    ),
     ("window.workspace.new", "New Workspace…", "", "{name?} save the current layout"),
     ("window.workspace.manage", "Manage Workspaces…", "", "{}"),
     ("window.workspace.delete", "Delete Workspace", "", "{name}"),

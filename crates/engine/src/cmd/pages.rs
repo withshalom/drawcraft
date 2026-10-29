@@ -49,8 +49,8 @@ pub fn specs() -> Vec<CommandSpec> {
             "Insert Pages",
             [],
             None,
-            "{after?: page number (1-based; default: the last page; 0: before the first), count?: 1 to 100 (default 1), width?, height? (default: the size of the page they follow, else the first page)} add pages: new artboards placed right of the rightmost artboard, in a row, and put in the page order after page `after`; one undo step → {numbers: the new pages' numbers, indices: their artboards' indices}",
-            paged,
+            "{after?: page number (1-based; default: the last page; 0: before the first), count?: 1 to 100 (default 1), width?, height? (default: the size of the page they follow, else the first page)} add pages: new artboards placed right of the rightmost artboard, in a row, and put in the page order after page `after`; a document without pages becomes a pages document (its artboards its first pages, as pages.enable makes them) in the same step; one undo step → {numbers: the new pages' numbers, indices: their artboards' indices}",
+            has_doc,
             insert
         ),
         cmd!(
@@ -58,8 +58,8 @@ pub fn specs() -> Vec<CommandSpec> {
             "Move Page",
             [],
             None,
-            "{page: number (1-based), to: number (1-based; past the end: last)} change a page's place in the page order (the artboard doesn't move on the canvas); one undo step",
-            paged,
+            "{page: number (1-based), to: number (1-based; past the end: last)} change a page's place in the page order (the artboard doesn't move on the canvas); a document without pages becomes a pages document in the same step; one undo step",
+            has_doc,
             move_page
         ),
         cmd!(
@@ -155,7 +155,6 @@ fn insert(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "pages.insert";
     check_numbers(p, &["width", "height"], C)?;
     let d0 = &s.doc()?.doc;
-    need_paged(d0, C)?;
     let order = d0.page_order();
     let pages = order.len();
     let after = match p.get("after") {
@@ -225,7 +224,6 @@ fn insert(s: &mut Session, p: &Value) -> Result<Value> {
 fn move_page(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "pages.move";
     let d0 = &s.doc()?.doc;
-    need_paged(d0, C)?;
     let pages = d0.page_order().len();
     let from = page_number(p, "page", pages, C)?;
     let to = p.get("to").and_then(Value::as_u64).map(index).ok_or_else(|| bad(C, "missing page number `to`"))?;
