@@ -60,8 +60,8 @@ copied: the clean-room rule in [`AGENTS.md`](AGENTS.md) covers it as it covers A
 
 ## Try it in your browser
 
-The web build is published to **<https://withshalom.github.io/drawcraft/>** from the `web` branch by
-`.github/workflows/web-deploy.yml`, on every push there. It runs entirely in the browser (WebGPU, with WebGL2 as
+The web build is published to **<https://withshalom.github.io/drawcraft/>** from `main` (and the `web` branch)
+by `.github/workflows/web-deploy.yml`, on every push there. It runs entirely in the browser (WebGPU, with WebGL2 as
 the fallback); files you open stay on your machine. Use a current Chrome, Edge, Firefox or Safari.
 
 ## A look around
@@ -152,7 +152,7 @@ The details are in [`docs/mcp.md`](docs/mcp.md) and [`docs/control-protocol.md`]
 
 **DRAWcraft is at its start (2026-10-28).** Today it is VectorCraft with DRAWcraft's name, icon and file
 extension, a web build, and the clean-room and naming rules for Corel's software. The `draw-mode` branch (and
-the `web` branch, which publishes it) adds the first slice of pages: a document can use pages, insert and reorder
+the `web` branch, which publishes it too) adds the first slice of pages: a document can use pages, insert and reorder
 them, and make layers master layers whose art repeats on every page in export, print and on the canvas. Those
 are commands for now (search the command palette for "Pages" or "Master Layer", or use them over MCP); the Pages
 panel and a Layout menu come next, then `.cdr` reading on the `cdr` branch. What's built
