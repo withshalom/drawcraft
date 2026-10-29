@@ -19,6 +19,11 @@ Formerly **DrawCraft** (renamed 2026-10-01): old `.drawcraft` files and `"format
   - Behaviour comes only from public documentation (helpx, published specs, public forum posts), cited by URL, and from files users send us that they own (used locally, never committed). Never copy Adobe icons, artwork, presets or wording beyond feature names.
   - If a task seems to need any of this, stop and say so instead. `cargo xtask cleanroom` (run by `cargo xtask ci`) fails on Adobe copyright notices and on fixtures made with Adobe applications.
   - Never copy GPL/AGPL code (Inkscape, lib2geom…).
+- **The same clean-room rule covers Corel software (absolute rule, from the owner of the `draw-mode` and `cdr` branches; for `.cdr` support and the draw-mode layout).** Corel's terms very likely forbid reverse engineering too. So everything above applies with "Corel" (CorelDRAW, PowerTRACE, CorelCAD, PHOTO-PAINT and the rest) in place of "Adobe":
+  - Never run, script, screenshot or measure a Corel application, never read or copy anything inside a Corel install (binaries, presets, palettes, clipart, fonts, filters, help files), and never make test files with Corel software.
+  - `.cdr` is not publicly specified. Its behaviour comes only from files users send us that they own (used locally, never committed), openly licensed files with a recorded source and SHA-256 (fetched pinned, like the Affinity corpus), and written descriptions that are public. Don't copy code from any `.cdr` reader, including libcdr (MPL-2.0), unless the branch owner has approved its licence (`docs/draw-mode.md`, decision D4); if approved, it goes in a crate of its own and is credited in `NOTICE`.
+  - Corel's names are for docs and file-format names only. Command labels, menus, panels and params docs use our own words; `cargo xtask brands` rejects Corel names there as it does Adobe's.
+  - Never copy Corel icons, palettes, presets, clipart, wording or screenshots.
 - **Assets: no Adobe iconography or images — ever (absolute rule, from the project owner).**
   - Never add, copy, trace, redraw-from, embed or ship any icon, image, artwork, cursor, preset, swatch/brush/symbol/pattern/style library, ICC profile or screenshot from Adobe products or from any other source whose licence doesn't allow it.
   - Every image, icon, font or other asset must be one of:

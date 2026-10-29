@@ -159,6 +159,32 @@ enum Drag {
 }
 
 /// Paint the document canvas, complete or cached artwork, navigation and tool overlays.
+/// The document the canvas draws: `doc` itself, or, for a pages document with master layers
+/// (draw mode), a copy with their art repeated on every page, made once per revision. Only the
+/// picture uses the copy; selection and hit tests use the document.
+fn drawn_doc(
+    cache: &mut Option<((u64, u64), std::sync::Arc<vectorcraft_doc::Document>)>,
+    uid: u64,
+    revision: u64,
+    doc: &std::sync::Arc<vectorcraft_doc::Document>,
+) -> std::sync::Arc<vectorcraft_doc::Document> {
+    if doc.master_layer_ids().is_empty() {
+        *cache = None;
+        return doc.clone();
+    }
+    if let Some((key, drawn)) = cache.as_ref()
+        && *key == (uid, revision)
+    {
+        return drawn.clone();
+    }
+    let drawn = match doc.with_master_pages() {
+        std::borrow::Cow::Owned(d) => std::sync::Arc::new(d),
+        std::borrow::Cow::Borrowed(_) => doc.clone(),
+    };
+    *cache = Some(((uid, revision), drawn.clone()));
+    drawn
+}
+
 pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     let t = Tokens::get(ui.ctx());
     let full = ui.available_rect_before_wrap();
@@ -224,7 +250,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     }
     let painter = ui.painter_at(rect);
     let Some(st) = app.session.active() else { return };
-    let doc = st.doc.clone();
+    let doc = drawn_doc(&mut app.canvas.master_pages, st.uid, st.revision, &st.doc);
     let mask_view = st.shown_mask();
 
     paint_paper(app, ui, &painter, &xf, rect, &t);

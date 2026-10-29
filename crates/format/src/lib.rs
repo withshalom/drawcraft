@@ -608,6 +608,8 @@ pub fn load_file(bytes: &[u8]) -> Result<NativeFile, FormatError> {
     // Untrusted: capped, named and with a zoom and centre the canvas can show.
     doc.tidy_views();
     doc.tidy_graph_designs();
+    // Untrusted: the page table (draw mode), capped and without repeated ids.
+    doc.pages = doc.pages.take().map(vectorcraft_doc::pages::Pages::bounded);
     doc.raster_effects.add_around = doc.raster_effects.add_around.clamp(0.0, vectorcraft_doc::rastersettings::MAX_ADD_AROUND);
     let mut depth_notes = vec![];
     doc.limit_depth_noting(&mut depth_notes);

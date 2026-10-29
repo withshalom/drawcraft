@@ -32,6 +32,13 @@ const DENY: &[&str] = &[
     "myriad",
     "pantone",
     "aicb",
+    // Corel's names, for draw mode and `.cdr` support (docs may name them; strings users read
+    // may not).
+    "corel",
+    "coreldraw",
+    "corelcad",
+    "powertrace",
+    "powerclip",
 ];
 
 /// Marks a line that keeps a legacy name on purpose.
@@ -341,6 +348,9 @@ line Pantone"; }
         assert_eq!(terms_in("Adobe's app", DENY), ["adobe"]);
         assert_eq!(terms_in("an ILLUSTRATOR-style UI", DENY), ["illustrator"]);
         assert!(terms_in("illustrators illustration copyAicb aicbMode", DENY).is_empty());
+        assert_eq!(terms_in("opens CorelDRAW files", DENY), ["coreldraw"]);
+        assert_eq!(terms_in("a PowerClip container by Corel", DENY), ["corel", "powerclip"]);
+        assert!(terms_in("coreldrawing corelated", DENY).is_empty());
     }
 
     #[test]

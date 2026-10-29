@@ -583,7 +583,18 @@ pub fn bake_appearance(n: &Node) -> Option<Node> {
 /// resources of its placed documents' art added ([`Document::with_placed_art`]); `None` when
 /// there is nothing to do (export it as is).
 pub fn bake_document(doc: &Document) -> Option<Document> {
-    let placed = doc.with_placed_art();
+    // Pages: master layers' art repeated on every page, before anything else reads the art.
+    let paged = doc.with_master_pages();
+    let placed = match paged {
+        std::borrow::Cow::Borrowed(d) => d.with_placed_art(),
+        std::borrow::Cow::Owned(d) => {
+            let placed = match d.with_placed_art() {
+                std::borrow::Cow::Owned(p) => Some(p),
+                std::borrow::Cow::Borrowed(_) => None,
+            };
+            std::borrow::Cow::Owned(placed.unwrap_or(d))
+        }
+    };
     if !placed.layers.iter().any(|l| needs_bake(l)) {
         return match placed {
             std::borrow::Cow::Owned(d) => Some(d),
