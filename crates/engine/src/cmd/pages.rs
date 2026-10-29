@@ -49,8 +49,8 @@ pub fn specs() -> Vec<CommandSpec> {
             "Insert Pages",
             [],
             None,
-            "{after?: page number (1-based; default: the last page; 0: before the first), count?: 1 to 100 (default 1), width?, height? (default: the size of the page they follow, else the first page)} add pages: new artboards placed right of the rightmost artboard, in a row, and put in the page order after page `after`; one undo step → {numbers: the new pages' numbers, indices: their artboards' indices}",
-            paged,
+            "{after?: page number (1-based; default: the last page; 0: before the first), count?: 1 to 100 (default 1), width?, height? (default: the size of the page they follow, else the first page)} add pages: new artboards placed right of the rightmost artboard, in a row, and put in the page order after page `after`; a document without pages becomes a pages document (its artboards its first pages, as pages.enable makes them) in the same step; one undo step → {numbers: the new pages' numbers, indices: their artboards' indices}",
+            has_doc,
             insert
         ),
         cmd!(
@@ -58,8 +58,8 @@ pub fn specs() -> Vec<CommandSpec> {
             "Move Page",
             [],
             None,
-            "{page: number (1-based), to: number (1-based; past the end: last)} change a page's place in the page order (the artboard doesn't move on the canvas); one undo step",
-            paged,
+            "{page: number (1-based), to: number (1-based; past the end: last)} change a page's place in the page order (the artboard doesn't move on the canvas); a document without pages becomes a pages document in the same step; one undo step",
+            has_doc,
             move_page
         ),
         cmd!(
@@ -88,6 +88,28 @@ fn need_paged(d: &Document, cmd: &str) -> Result<()> {
     if d.is_paged() { Ok(()) } else { Err(bad(cmd, "the document doesn't use pages: run pages.enable first")) }
 }
 
+/// Give artboards still named by default ("Artboard 3", their place in the document) their page's
+/// name ("Page 1"), as a document becomes a pages document; names someone chose stay.
+fn name_pages(d: &mut Document) {
+    for (n, i) in d.page_order().into_iter().enumerate() {
+        if let Some(a) = d.artboards.get_mut(i)
+            && a.name == format!("Artboard {}", i + 1)
+        {
+            a.name = format!("Page {}", n + 1);
+        }
+    }
+}
+
+/// Set `d`'s page table; a document becoming a pages document here has its default-named
+/// artboards named by their pages ([`name_pages`]), in the order just set.
+fn set_table(d: &mut Document, table: Pages) {
+    let was = d.is_paged();
+    d.pages = Some(table);
+    if !was {
+        name_pages(d);
+    }
+}
+
 /// The page table of `d`, made from its artboards' order when it lists none yet.
 fn table(d: &Document) -> Pages {
     let order = d.page_order().into_iter().filter_map(|i| d.artboards.get(i)).map(|a| a.id).collect();
@@ -105,7 +127,7 @@ fn enable(s: &mut Session, p: &Value) -> Result<Value> {
         return Err(bad(C, format!("a document of pages has at most {MAX_PAGES} pages")));
     }
     let n = s.edit("Use Pages", |d, _| {
-        d.pages = Some(Pages { order: d.artboards.iter().map(|a| a.id).collect(), master_layers: vec![] });
+        set_table(d, Pages { order: d.artboards.iter().map(|a| a.id).collect(), master_layers: vec![] });
         Ok(d.artboards.len())
     })?;
     Ok(json!({ "pages": n }))
@@ -155,7 +177,6 @@ fn insert(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "pages.insert";
     check_numbers(p, &["width", "height"], C)?;
     let d0 = &s.doc()?.doc;
-    need_paged(d0, C)?;
     let order = d0.page_order();
     let pages = order.len();
     let after = match p.get("after") {
@@ -215,7 +236,7 @@ fn insert(s: &mut Session, p: &Value) -> Result<Value> {
             x += w + PAGE_GAP;
         }
         table.order.splice(at..at, ids);
-        d.pages = Some(table);
+        set_table(d, table);
         let numbers: Vec<usize> = (at + 1..=at + count).collect();
         Ok((numbers, indices))
     })?;
@@ -225,7 +246,6 @@ fn insert(s: &mut Session, p: &Value) -> Result<Value> {
 fn move_page(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "pages.move";
     let d0 = &s.doc()?.doc;
-    need_paged(d0, C)?;
     let pages = d0.page_order().len();
     let from = page_number(p, "page", pages, C)?;
     let to = p.get("to").and_then(Value::as_u64).map(index).ok_or_else(|| bad(C, "missing page number `to`"))?;
@@ -240,7 +260,7 @@ fn move_page(s: &mut Session, p: &Value) -> Result<Value> {
         let id = table.order.remove(from);
         let to = (to - 1).min(table.order.len());
         table.order.insert(to, id);
-        d.pages = Some(table);
+        set_table(d, table);
         Ok(())
     })?;
     ok()
@@ -272,7 +292,7 @@ fn set_master(s: &mut Session, p: &Value) -> Result<Value> {
         if master {
             table.master_layers.push(id);
         }
-        d.pages = Some(table);
+        set_table(d, table);
         Ok(())
     })?;
     ok()

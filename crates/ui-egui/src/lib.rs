@@ -39,6 +39,7 @@ pub mod io;
 pub mod keymap;
 pub mod layout_migration;
 pub mod menus;
+pub mod modes;
 pub mod native_menu;
 pub mod opening;
 pub mod palette;

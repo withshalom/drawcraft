@@ -49,30 +49,11 @@ pub fn status_bar(app: &mut VectorcraftApp, ui: &mut Ui) {
                         });
                 });
                 ui.separator();
-                // The artboard navigator has First and Previous, a field with the current artboard's
-                // number and name and a list of every artboard, then Next and Last.
-                let nab = app.session.active().map(|d| d.doc.artboards.len()).unwrap_or(0);
-                let cur = crate::panels::artboards::selected(app, nab);
-                let mut go = None;
-                for (icon, to, tip) in [("chevrons-left", "first", tl!("First Artboard")), ("chevron-left", "previous", tl!("Previous Artboard"))] {
-                    if widgets::icon_button_enabled(ui, icon, tip, false, cur > 0, 18.0).clicked() {
-                        go = Some(json!(to));
-                    }
+                // In Draw mode the page bar above does the navigator's work (`page_bar`).
+                if app.ui.mode != crate::modes::Mode::Draw {
+                    artboard_navigator(app, ui);
+                    ui.separator();
                 }
-                if let Some(i) = artboard_list(app, ui, cur) {
-                    go = Some(json!(i));
-                }
-                for (icon, to, tip) in [("chevron-right", "next", tl!("Next Artboard")), ("chevrons-right", "last", tl!("Last Artboard"))] {
-                    if widgets::icon_button_enabled(ui, icon, tip, false, cur + 1 < nab, 18.0).clicked() {
-                        go = Some(json!(to));
-                    }
-                }
-                if let Some(to) = go
-                    && let Err(e) = app.run("view.goToArtboard", json!({ "index": to }))
-                {
-                    app.status(e);
-                }
-                ui.separator();
                 let tool = vectorcraft_tools::tool_info(app.session.tool_id())
                     .map(|t| {
                         // The catalog keys carry the full label ("Selection Tool"); only English drops the suffix.
@@ -84,6 +65,32 @@ pub fn status_bar(app: &mut VectorcraftApp, ui: &mut Ui) {
                 status_readouts(app, ui, &t);
             });
         });
+}
+
+/// The artboard navigator: First and Previous, a field with the current artboard's number and name
+/// and a list of every artboard, then Next and Last.
+fn artboard_navigator(app: &mut VectorcraftApp, ui: &mut Ui) {
+    let nab = app.session.active().map(|d| d.doc.artboards.len()).unwrap_or(0);
+    let cur = crate::panels::artboards::selected(app, nab);
+    let mut go = None;
+    for (icon, to, tip) in [("chevrons-left", "first", tl!("First Artboard")), ("chevron-left", "previous", tl!("Previous Artboard"))] {
+        if widgets::icon_button_enabled(ui, icon, tip, false, cur > 0, 18.0).clicked() {
+            go = Some(json!(to));
+        }
+    }
+    if let Some(i) = artboard_list(app, ui, cur) {
+        go = Some(json!(i));
+    }
+    for (icon, to, tip) in [("chevron-right", "next", tl!("Next Artboard")), ("chevrons-right", "last", tl!("Last Artboard"))] {
+        if widgets::icon_button_enabled(ui, icon, tip, false, cur + 1 < nab, 18.0).clicked() {
+            go = Some(json!(to));
+        }
+    }
+    if let Some(to) = go
+        && let Err(e) = app.run("view.goToArtboard", json!({ "index": to }))
+    {
+        app.status(e);
+    }
 }
 
 /// The most recently measured status widths, scoped to this UI and display settings.

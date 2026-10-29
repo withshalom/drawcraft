@@ -24,7 +24,7 @@ fn pages(s: &mut Session) -> Vec<(u64, String)> {
 fn a_document_turns_into_pages_and_back() {
     let mut s = doc();
     assert_eq!(run(&mut s, "pages.list", json!({}))["paged"], false);
-    assert!(s.execute("pages.insert", &json!({})).is_err(), "pages need pages.enable first");
+    assert!(s.execute("pages.disable", &json!({})).is_err(), "not a pages document yet");
     assert_eq!(run(&mut s, "pages.enable", json!({}))["pages"], 1);
     assert!(s.execute("pages.enable", &json!({})).is_err(), "already pages");
     assert_eq!(run(&mut s, "pages.list", json!({}))["paged"], true);
@@ -68,6 +68,43 @@ fn pages_are_inserted_in_order_and_moved() {
     assert!(s.execute("pages.insert", &json!({"count": 0})).is_err());
     assert!(s.execute("pages.insert", &json!({"count": 101})).is_err());
     assert!(s.execute("pages.insert", &json!({"width": "wide"})).is_err());
+}
+
+/// Adding a page to a document without pages makes it a pages document, its artboards its first
+/// pages, in one undo step (the page bar's Add Page in draw mode).
+#[test]
+fn inserting_a_page_into_an_artboards_document_turns_it_into_pages_in_one_step() {
+    let mut s = doc();
+    run(&mut s, "artboard.new", json!({"x": 200, "y": 0, "width": 100, "height": 100}));
+    let r = run(&mut s, "pages.insert", json!({}));
+    assert_eq!(r["numbers"], json!([3]));
+    let l = run(&mut s, "pages.list", json!({}));
+    assert_eq!(l["paged"], true);
+    assert_eq!(l["pages"].as_array().unwrap().len(), 3);
+    // Artboards with their default names take their pages' names; a chosen name stays.
+    let names: Vec<&str> = l["pages"].as_array().unwrap().iter().map(|p| p["name"].as_str().unwrap()).collect();
+    assert_eq!(names, ["Page 1", "Page 2", "Page 3"]);
+    run(&mut s, "edit.undo", json!({}));
+    run(&mut s, "artboard.setProps", json!({"index": 0, "name": "Cover"}));
+    run(&mut s, "pages.enable", json!({}));
+    let l = run(&mut s, "pages.list", json!({}));
+    let names: Vec<&str> = l["pages"].as_array().unwrap().iter().map(|p| p["name"].as_str().unwrap()).collect();
+    assert_eq!(names, ["Cover", "Page 2"]);
+    run(&mut s, "edit.undo", json!({}));
+    run(&mut s, "edit.undo", json!({}));
+    run(&mut s, "pages.insert", json!({}));
+    run(&mut s, "edit.undo", json!({}));
+    let l = run(&mut s, "pages.list", json!({}));
+    assert_eq!(l["paged"], false, "one undo step takes the page and the table");
+    assert_eq!(l["pages"].as_array().unwrap().len(), 2);
+    assert_eq!(l["pages"][0]["name"], "Artboard 1", "and the names it gave");
+    // Moving a page does the same.
+    run(&mut s, "pages.move", json!({"page": 2, "to": 1}));
+    let l = run(&mut s, "pages.list", json!({}));
+    assert_eq!(l["paged"], true);
+    assert_eq!(l["pages"][0]["index"], 1, "the second artboard is page 1 now");
+    run(&mut s, "edit.undo", json!({}));
+    assert_eq!(run(&mut s, "pages.list", json!({}))["paged"], false);
 }
 
 #[test]
