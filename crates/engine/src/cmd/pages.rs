@@ -88,6 +88,28 @@ fn need_paged(d: &Document, cmd: &str) -> Result<()> {
     if d.is_paged() { Ok(()) } else { Err(bad(cmd, "the document doesn't use pages: run pages.enable first")) }
 }
 
+/// Give artboards still named by default ("Artboard 3", their place in the document) their page's
+/// name ("Page 1"), as a document becomes a pages document; names someone chose stay.
+fn name_pages(d: &mut Document) {
+    for (n, i) in d.page_order().into_iter().enumerate() {
+        if let Some(a) = d.artboards.get_mut(i)
+            && a.name == format!("Artboard {}", i + 1)
+        {
+            a.name = format!("Page {}", n + 1);
+        }
+    }
+}
+
+/// Set `d`'s page table; a document becoming a pages document here has its default-named
+/// artboards named by their pages ([`name_pages`]), in the order just set.
+fn set_table(d: &mut Document, table: Pages) {
+    let was = d.is_paged();
+    d.pages = Some(table);
+    if !was {
+        name_pages(d);
+    }
+}
+
 /// The page table of `d`, made from its artboards' order when it lists none yet.
 fn table(d: &Document) -> Pages {
     let order = d.page_order().into_iter().filter_map(|i| d.artboards.get(i)).map(|a| a.id).collect();
@@ -105,7 +127,7 @@ fn enable(s: &mut Session, p: &Value) -> Result<Value> {
         return Err(bad(C, format!("a document of pages has at most {MAX_PAGES} pages")));
     }
     let n = s.edit("Use Pages", |d, _| {
-        d.pages = Some(Pages { order: d.artboards.iter().map(|a| a.id).collect(), master_layers: vec![] });
+        set_table(d, Pages { order: d.artboards.iter().map(|a| a.id).collect(), master_layers: vec![] });
         Ok(d.artboards.len())
     })?;
     Ok(json!({ "pages": n }))
@@ -214,7 +236,7 @@ fn insert(s: &mut Session, p: &Value) -> Result<Value> {
             x += w + PAGE_GAP;
         }
         table.order.splice(at..at, ids);
-        d.pages = Some(table);
+        set_table(d, table);
         let numbers: Vec<usize> = (at + 1..=at + count).collect();
         Ok((numbers, indices))
     })?;
@@ -238,7 +260,7 @@ fn move_page(s: &mut Session, p: &Value) -> Result<Value> {
         let id = table.order.remove(from);
         let to = (to - 1).min(table.order.len());
         table.order.insert(to, id);
-        d.pages = Some(table);
+        set_table(d, table);
         Ok(())
     })?;
     ok()
@@ -270,7 +292,7 @@ fn set_master(s: &mut Session, p: &Value) -> Result<Value> {
         if master {
             table.master_layers.push(id);
         }
-        d.pages = Some(table);
+        set_table(d, table);
         Ok(())
     })?;
     ok()

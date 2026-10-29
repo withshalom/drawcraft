@@ -40,9 +40,14 @@ fn click_fills_and_right_click_strokes() {
     let id = app.run("shape.rectangle", json!({"x": 0, "y": 0, "width": 10, "height": 10})).unwrap()["id"].as_u64().unwrap();
     let c = cells(&app);
     // A colour unlike the default fill (white), so the test shows the click took.
-    let colour =
-        c.iter().rev().find(|c| matches!(&c.paint, Paint::Solid { color, .. } if color.to_hex().to_lowercase() != "#ffffff")).unwrap().clone();
-    let Paint::Solid { color, .. } = &colour.paint else { unreachable!() };
+    let (colour, color) = c
+        .iter()
+        .rev()
+        .find_map(|c| match &c.paint {
+            Paint::Solid { color, .. } if color.to_hex().to_lowercase() != "#ffffff" => Some((c.clone(), *color)),
+            _ => None,
+        })
+        .unwrap();
     let mut p = colour.params.clone();
     p["focus"] = json!(false);
     app.run("paint.setFill", p).unwrap();
