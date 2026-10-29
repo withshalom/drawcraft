@@ -474,6 +474,15 @@ fn plugin_file(doc: &Document, plugin: &vectorcraft_plugins::Plugin, f: &Format,
 /// [`encode_all`] without the font substitution warning.
 fn encode_files(doc: &Document, f: &Format, p: &Value) -> Result<Encoded> {
     let doc = &*doc.without_edit_modes();
+    // Pages: raster output draws master layers' art on every page. Vector formats get the
+    // repeats from their exporters' `bake_document`; native files keep the art once.
+    let paged;
+    let doc = if f.raster {
+        paged = doc.with_master_pages();
+        &*paged
+    } else {
+        doc
+    };
     let n = doc.artboards.len();
     // SVG reads its own `useArtboards` (an SVG option).
     let use_artboards = if f.raster || matches!(f.id, "pdf" | "ai" | "dxf" | "emf" | "wmf") { use_artboards(p)? } else { None };

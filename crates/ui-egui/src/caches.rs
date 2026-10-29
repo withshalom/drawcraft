@@ -41,6 +41,9 @@ pub struct CanvasCache {
     pub selection_bounds: Option<((u64, u64), Option<vectorcraft_geom::Rect>)>,
     /// [`VectorcraftApp::content_bounds`] for (document uid, revision).
     pub content_bounds: Option<((u64, u64), Option<vectorcraft_geom::Rect>)>,
+    /// Pages: the document the canvas draws for (document uid, revision) when it has master
+    /// layers to repeat on its pages ([`vectorcraft_doc::Document::with_master_pages`]).
+    pub master_pages: Option<((u64, u64), std::sync::Arc<vectorcraft_doc::Document>)>,
     /// The tools' cursors as OS cursor bitmaps.
     pub cursors: cursors::Images,
     /// The view the canvas last drew and when it last changed (egui's input time): while it moves,

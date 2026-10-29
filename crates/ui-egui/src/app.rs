@@ -68,6 +68,7 @@ impl VectorcraftApp {
                 selection_box: None,
                 selection_bounds: None,
                 content_bounds: None,
+                master_pages: None,
                 cursors: Default::default(),
                 view_moved: None,
                 hover_cursor: None,

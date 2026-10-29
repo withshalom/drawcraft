@@ -39,6 +39,7 @@ pub mod node;
 pub mod objects_on_path;
 pub mod orient;
 pub mod overprint;
+pub mod pages;
 pub mod pattern;
 pub mod perspective;
 mod pixels;
@@ -309,6 +310,10 @@ pub struct Document {
     /// is set, so documents without any pay nothing for them.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub dimensions: bool,
+    /// Draw mode: the page order and master layers over the artboards ([`pages`]). `None` for an
+    /// ordinary artboards document, which then saves exactly as before.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub pages: Option<pages::Pages>,
     /// Where each node is in the tree, for lookups by id ([`id_index`]): a cache, never saved.
     #[serde(skip)]
     index: id_index::IdIndex,

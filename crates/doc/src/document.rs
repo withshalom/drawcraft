@@ -70,6 +70,7 @@ impl Document {
             puppet,
             new_art,
             dimensions,
+            pages,
             retired_artboard_id: _,
             index: _,
         } = self;
@@ -138,6 +139,7 @@ impl Document {
             }
             && *new_art == other.new_art
             && *dimensions == other.dimensions
+            && *pages == other.pages
     }
 
     /// Document Raster Effects Settings › Resolution in ppi, 1 to 2400 (72 when the stored value
@@ -245,6 +247,7 @@ impl Document {
             new_art: Default::default(),
             dimensions: false,
             retired_artboard_id: Default::default(),
+            pages: None,
             index: Default::default(),
         };
         let id = d.alloc_id();
