@@ -1,0 +1,26 @@
+# Borrowed from TraceDraw at commit 21f229340 (its version 0.24.0); see crates/tracedraw-cdr/README.md.
+[package]
+name = "tracedraw-core"
+version = "0.24.0"
+# TraceDraw writes edition 2021 Rust; kept so its code means what it meant there.
+edition = "2021"
+license = "MIT OR Apache-2.0"
+authors = ["Ighor Toth", "the TraceDraw contributors"]
+repository = "https://github.com/igtoth/tracedraw"
+rust-version.workspace = true
+description = "Document model, geometry and command engine for the TraceDraw vector editor"
+
+[lints]
+workspace = true
+
+[dependencies]
+kurbo.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+base64 = "0.22"
+i_overlay = "9"
+
+[features]
+# Hand-assembled ICC profiles, for the tests of other crates.
+test-profiles = []

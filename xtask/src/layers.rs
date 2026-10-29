@@ -63,6 +63,11 @@ pub const TABLE: &[(&str, Class)] = &[
     ("plugins", Class::Layer(2)),
     ("affinity", Class::Standalone),
     ("scriptcheck", Class::Standalone),
+    // Borrowed from TraceDraw: its document model and its `.cdr`/CMX reader, read into that model
+    // and mapped to VectorCraft's by the engine (`cmd/fileio/cdr`).
+    ("tracedraw-core", Class::Standalone),
+    ("tracedraw-cdr-format", Class::Standalone),
+    ("tracedraw-cdr", Class::Layer(1)),
 ];
 
 /// Explicit orderings *within* a layer (earlier may be used by later).

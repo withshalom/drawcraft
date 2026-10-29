@@ -1,0 +1,30 @@
+# Borrowed from TraceDraw at commit 21f229340 (its version 0.24.0); see crates/tracedraw-cdr/README.md.
+[package]
+name = "tracedraw-cdr"
+version = "0.24.0"
+# TraceDraw writes edition 2021 Rust; kept so its code means what it meant there.
+edition = "2021"
+license = "MIT OR Apache-2.0"
+authors = ["Ighor Toth", "the TraceDraw contributors"]
+repository = "https://github.com/igtoth/tracedraw"
+rust-version.workspace = true
+description = "Clean-room reader for .cdr files: RIFF and ZIP containers"
+
+[lints]
+workspace = true
+
+[dependencies]
+tracedraw-core.workspace = true
+tracedraw-cdr-format.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+log.workspace = true
+zip.workspace = true
+encoding_rs.workspace = true
+flate2 = { workspace = true }
+ttf-parser.workspace = true
+tiny-skia.workspace = true
+
+[dev-dependencies]
+tracedraw-core = { workspace = true, features = ["test-profiles"] }
+tracedraw-cdr-format = { workspace = true, features = ["test-support"] }

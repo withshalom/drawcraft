@@ -24,6 +24,12 @@ Rust dependencies (vello_cpu, kurbo, peniko, skrifa, harfrust, usvg, linesweeper
 fetched through crates.io under their own permissive licenses (mostly MIT and/or Apache-2.0; also
 BSD, ISC, Zlib, BSL-1.0 and Unicode-3.0).
 
+The `.cdr` and CMX reader comes from TraceDraw (https://github.com/igtoth/tracedraw), copied with
+its document model into crates/tracedraw-core, crates/tracedraw-cdr-format and crates/tracedraw-cdr:
+Copyright (c) 2026 Ighor Toth and the TraceDraw contributors, under the MIT License or the Apache
+License, Version 2.0 (the LICENSE-MIT and LICENSE-APACHE files in those folders). How it was written
+is recorded in TraceDraw's CLEANROOM.md; what DRAWcraft changed is in crates/tracedraw-cdr/README.md.
+
 JPEG export uses the jpeg-encoder crate (MIT OR Apache-2.0, and the IJG License): this software is
 based in part on the work of the Independent JPEG Group.
 

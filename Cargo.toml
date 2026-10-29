@@ -50,6 +50,16 @@ vectorcraft-metafile = { path = "crates/metafile" }
 vectorcraft-plugins = { path = "crates/plugins" }
 vectorcraft-affinity = { path = "crates/affinity" }
 vectorcraft-scriptcheck = { path = "crates/scriptcheck" }
+# Borrowed from TraceDraw (MIT OR Apache-2.0, https://github.com/igtoth/tracedraw): its `.cdr` and
+# CMX reader and the document model it reads into. See `crates/tracedraw-cdr/README.md`.
+tracedraw-core = { path = "crates/tracedraw-core" }
+tracedraw-cdr-format = { path = "crates/tracedraw-cdr-format" }
+tracedraw-cdr = { path = "crates/tracedraw-cdr" }
+# The versions TraceDraw builds them with.
+zip = { version = "4", default-features = false, features = ["deflate"] }
+tiny-skia = "0.12"
+ttf-parser = "0.25"
+encoding_rs = "0.8"
 
 # foundation
 kurbo = { version = "0.13", features = ["serde"] }

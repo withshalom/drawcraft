@@ -1,0 +1,27 @@
+# Borrowed from TraceDraw at commit 21f229340 (its version 0.24.0); see crates/tracedraw-cdr/README.md.
+[package]
+name = "tracedraw-cdr-format"
+version = "0.24.0"
+# TraceDraw writes edition 2021 Rust; kept so its code means what it meant there.
+edition = "2021"
+license = "MIT OR Apache-2.0"
+authors = ["Ighor Toth", "the TraceDraw contributors"]
+repository = "https://github.com/igtoth/tracedraw"
+rust-version.workspace = true
+description = "Clean-room `.cdr` file structure: containers, RIFF chunk trees, embedded fonts and compound files, with no document model"
+readme = "README.md"
+
+[lints]
+workspace = true
+
+[dependencies]
+thiserror.workspace = true
+log.workspace = true
+zip.workspace = true
+flate2 = { workspace = true }
+tiny-skia.workspace = true
+
+[features]
+# Builders of small test files (compound files, embedded fonts) for the
+# tests of the crates above this one.
+test-support = []
