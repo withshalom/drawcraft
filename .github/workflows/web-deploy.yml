@@ -1,12 +1,12 @@
-# Builds DRAWcraft's browser version (the `draw-mode` branch here plus this file), apps/vectorcraft-web, wasm via Trunk, and publishes it to GitHub Pages at
+# Builds DRAWcraft's browser version (apps/vectorcraft-web, wasm via Trunk) and publishes it to GitHub Pages at
 # https://withshalom.github.io/drawcraft/ (Settings › Pages › Source: GitHub Actions).
-# Runs only for the `web` branch of withshalom/drawcraft, so `main` stays a pure mirror of upstream; `web`
-# merges `draw-mode` to publish it. Same layout as the CADCraft fork's web-deploy.
+# Runs for pushes to `main` (the DRAWcraft app) and to the `web` branch (which carries the draw-mode work), only
+# in withshalom/drawcraft. Same layout as the CADCraft fork's web-deploy.
 name: web-deploy
 
 on:
   push:
-    branches: [web]
+    branches: [main, web]
   workflow_dispatch:
 
 permissions:

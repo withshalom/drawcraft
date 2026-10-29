@@ -127,6 +127,14 @@ pub fn builtins() -> Vec<Workspace> {
             x.toolbar_advanced = true;
             x.open_panel = Some("symbols".into());
         }),
+        // Draw mode's arrangement (`crate::modes`): the Control bar, rulers and Layers in front.
+        w(crate::modes::DRAW_WORKSPACE, &|x| {
+            x.control_bar = true;
+            x.rulers = true;
+            x.toolbar_advanced = true;
+            x.task_bar = false;
+            x.dock_tab = DockTab::Layers;
+        }),
         w(TOUCH, &|x| {
             x.control_bar = true;
             x.toolbar = true;
@@ -694,7 +702,7 @@ mod tests {
     #[test]
     fn all_requested_workspaces_exist() {
         let ui = UiState::default();
-        for n in ["Essentials", "Essentials Classic", "Painting", "Typography", "Layout", "Tracing", "Web", "Automation", TOUCH] {
+        for n in ["Essentials", "Essentials Classic", "Painting", "Typography", "Layout", "Tracing", "Web", "Automation", "Draw", TOUCH] {
             assert!(find(&ui, n).is_some(), "{n}");
         }
     }

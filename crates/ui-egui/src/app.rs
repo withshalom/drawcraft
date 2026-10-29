@@ -475,6 +475,11 @@ impl VectorcraftApp {
             // Keeps the previous frame's value valid for menus drawn above, before the bars.
             widgets::set_menu_floor(&ctx, ctx.content_rect().bottom());
         }
+        // Draw mode's page bar (above the status bar) and swatch strip (the window's right edge).
+        if self.ui.mode == crate::modes::Mode::Draw && self.ui.screen_mode < 3 {
+            chrome::page_bar(self, ui);
+            chrome::swatch_strip(self, ui);
+        }
         if self.ui.toolbar && self.ui.screen_mode < 3 {
             toolbar::show(self, ui);
         }

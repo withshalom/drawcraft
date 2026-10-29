@@ -15,7 +15,9 @@ use crate::{VectorcraftApp, icons, menus, titlebar};
 
 mod control_bar;
 mod hints;
+mod page_bar;
 mod status_bar;
+mod swatch_strip;
 mod tabs;
 
 #[cfg(test)]
@@ -24,9 +26,11 @@ pub use control_bar::{AnchorControls, anchor_buttons, anchor_controls, control_b
 #[cfg(test)]
 use hints::hint_segments;
 pub use hints::{hint_bar, hint_strings};
+pub use page_bar::page_bar;
 pub use status_bar::status_bar;
 #[cfg(test)]
 use status_bar::{StatusReadoutWidths, status_readouts};
+pub use swatch_strip::swatch_strip;
 #[cfg(test)]
 use tabs::{CLOSE_BEFORE_TITLE, first_tab_shown, tab_title};
 pub use tabs::{doc_tabs, isolation_bar};
@@ -87,7 +91,11 @@ pub fn app_bar(app: &mut VectorcraftApp, ui: &mut Ui) {
             let icon = 28.0;
             let search = room >= 64.0 + 8.0 + gap + icon;
             let ws_w = ws_w.min(room - 8.0 - gap - if search { icon } else { 0.0 }).max(64.0);
-            let discord = search && room >= ws_w + 8.0 + gap + icon + 10.0 + gap + crate::community::discord_width(ui, false);
+            // The mode switch (Illustrate | Draw) goes before the search icon when room runs short.
+            let mode_w = crate::modes::width(ui);
+            let mode = room >= ws_w + 8.0 + gap + mode_w + 8.0 + gap + if search { icon } else { 0.0 };
+            let mode_room = if mode { mode_w + 8.0 + gap } else { 0.0 };
+            let discord = search && room >= ws_w + 8.0 + gap + icon + 10.0 + gap + crate::community::discord_width(ui, false) + mode_room;
             let mut rui = ui.new_child(egui::UiBuilder::new().max_rect(right).layout(egui::Layout::right_to_left(egui::Align::Center)));
             let ui = &mut rui;
             // Workspace switcher: shows the current workspace, opens Window → Workspace.
@@ -98,6 +106,10 @@ pub fn app_bar(app: &mut VectorcraftApp, ui: &mut Ui) {
             let wresp = wresp.on_hover_text(tl!("Switch workspace"));
             egui::Popup::menu(&wresp).show(|ui| crate::workspaces::popup(app, ui));
             ui.add_space(8.0);
+            if mode {
+                crate::modes::switch_ui(app, ui, WIDGET_H);
+                ui.add_space(8.0);
+            }
             // Search → command palette (its shortcut opens it too).
             if search {
                 let tip = match menus::shortcut_of("help.commandPalette") {
