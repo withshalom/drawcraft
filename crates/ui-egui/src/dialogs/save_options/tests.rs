@@ -73,7 +73,7 @@ fn save_as_svg_opens_svg_options_then_writes_svg() {
     let pick = &picks.borrow()[0];
     let labels: Vec<&str> = pick.filters.iter().map(|f| f.0.as_str()).collect();
     assert_eq!(labels, ["VectorCraft", "VectorCraft Template", "PDF", "SVG", "SVG Compressed", "PDF-compatible .ai"]);
-    assert_eq!(pick.name, "Untitled-1.vectorcraft");
+    assert_eq!(pick.name, "Untitled-1.drawcraft");
     let d = dialog(&app);
     assert_eq!((d.kind.as_str(), d.str("path").as_str(), d.str("mode").as_str()), ("svgOptions", "art.svg", "save"));
     assert!(written.borrow().is_empty(), "nothing is written before OK");
@@ -218,7 +218,7 @@ fn save_a_copy_and_template_suggest_their_names() {
     let folder = vectorcraft_testkit::temp_dir("save-template-dialog");
     app.session.prefs.templates_folder = folder.to_string_lossy().into_owned();
     app.run("file.saveCopy", json!({})).unwrap();
-    assert_eq!(picks.borrow()[0].name, "Untitled-1 copy.vectorcraft");
+    assert_eq!(picks.borrow()[0].name, "Untitled-1 copy.drawcraft");
     assert!(app.ui.dialog.is_none(), "the native format has no options");
     assert!(vectorcraft_format::sniff(&written.borrow()[0].1));
     assert!(app.session.active().unwrap().path.is_none() && app.session.active().unwrap().is_dirty());
@@ -287,7 +287,7 @@ fn web_save_as_names_the_file_and_picks_the_format() {
     let (mut app, written) = web();
     app.run("file.saveAs", json!({})).unwrap();
     let d = dialog(&app);
-    assert_eq!((heading(d).as_str(), d.str("path").as_str(), d.str("format").as_str()), ("Save As", "Untitled-1.vectorcraft", "vectorcraft"));
+    assert_eq!((heading(d).as_str(), d.str("path").as_str(), d.str("format").as_str()), ("Save As", "Untitled-1.drawcraft", "vectorcraft"));
     frame(&mut app, false);
     let mut d = app.ui.dialog.take().unwrap();
     switch_format(&mut app, &mut d, "pdf");
