@@ -29,7 +29,7 @@ fn a_new_swatch_joins_the_strip() {
     app.run("swatch.new", json!({"name": "Strip Test", "color": "#123456"})).unwrap();
     let c = cells(&app);
     assert_eq!(c.len(), before + 1);
-    assert_eq!(c.last().unwrap().params, json!({"swatch": "Strip Test"}));
+    assert!(c.iter().any(|c| c.params == json!({"swatch": "Strip Test"})));
 }
 
 /// What a click and a right-click send are paint commands the engine takes, and they leave the
@@ -39,7 +39,10 @@ fn click_fills_and_right_click_strokes() {
     let mut app = app();
     let id = app.run("shape.rectangle", json!({"x": 0, "y": 0, "width": 10, "height": 10})).unwrap()["id"].as_u64().unwrap();
     let c = cells(&app);
-    let colour = c.iter().find(|c| !c.name.is_empty()).unwrap().clone();
+    // A colour unlike the default fill (white), so the test shows the click took.
+    let colour =
+        c.iter().rev().find(|c| matches!(&c.paint, Paint::Solid { color, .. } if color.to_hex().to_lowercase() != "#ffffff")).unwrap().clone();
+    let Paint::Solid { color, .. } = &colour.paint else { unreachable!() };
     let mut p = colour.params.clone();
     p["focus"] = json!(false);
     app.run("paint.setFill", p).unwrap();
@@ -47,9 +50,8 @@ fn click_fills_and_right_click_strokes() {
     none["focus"] = json!(false);
     app.run("paint.setStroke", none).unwrap();
     let node = app.run("document.inspect", json!({"ids": [id]})).unwrap()["nodes"][0].clone();
-    assert_ne!(node["fill"], serde_json::Value::Null, "{node}");
-    assert!(node["fill"].to_string().contains(&colour.name) || node["fill"].as_str().is_some_and(|f| f.starts_with('#')), "{node}");
-    assert!(node["stroke"].is_null() || node["stroke"] == "none", "the stroke is None: {node}");
+    assert_eq!(node["fill"].as_str().unwrap().to_lowercase(), color.to_hex().to_lowercase(), "{node}");
+    assert_eq!(node["stroke"], "None", "{node}");
 }
 
 #[test]
@@ -60,7 +62,19 @@ fn the_strip_draws_one_tile_per_swatch() {
     let raw = egui::RawInput { screen_rect: Some(egui::Rect::from_min_size(egui::Pos2::ZERO, egui::vec2(800.0, 2000.0))), ..Default::default() };
     let mut out = ctx.run_ui(raw, |ui| swatch_strip(&mut app, ui));
     out.textures_delta.clear();
-    let rect = egui::containers::panel::PanelState::load(&ctx, egui::Id::unique("swatch_strip")).unwrap().outer_rect;
-    assert_eq!(rect.width(), WIDTH);
-    assert_eq!(rect.right(), 800.0, "at the window's right edge");
+    fn tiles(s: &egui::Shape, out: &mut Vec<egui::Rect>) {
+        match s {
+            egui::Shape::Rect(r) if (r.rect.width() - CELL).abs() < 0.5 && (r.rect.height() - CELL).abs() < 0.5 => out.push(r.rect),
+            egui::Shape::Vec(v) => v.iter().for_each(|s| tiles(s, out)),
+            _ => {}
+        }
+    }
+    let mut rects = vec![];
+    out.shapes.iter().for_each(|c| tiles(&c.shape, &mut rects));
+    rects.dedup();
+    assert!(!rects.is_empty());
+    assert!(rects.iter().all(|r| r.left() >= 800.0 - WIDTH && r.right() <= 800.0), "at the window's right edge: {rects:?}");
+    let n = cells(&app).len();
+    let rows: std::collections::BTreeSet<i32> = rects.iter().map(|r| r.top().round() as i32).collect();
+    assert_eq!(rows.len(), n, "one tile per swatch, one above the other");
 }
