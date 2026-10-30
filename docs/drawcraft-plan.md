@@ -1,6 +1,6 @@
 # DRAWcraft: plan for a CorelDRAW-class product on VectorCraft
 
-> **Last reviewed:** 2026-10-29 · **Last updated:** 2026-10-29 · **Change:** minor (Draw mode merged into `main`; previously: `main` is now the DRAWcraft app and publishes the web build; two repositories: product here, features on `withshalom/vectorcraft`; DRAWcraft spelling; `web` branch; previously: section 7, what's built: branding, icon, `.drawcraft` saving, pages first slice, web build; previously: the page model is an artboard plus a side table, not a second rectangle type; owner's decisions D1 and D2 recorded; P0 rules added; the "no version bump" format rule and our own command names corrected from the first version)
+> **Last reviewed:** 2026-10-29 · **Last updated:** 2026-10-29 · **Change:** minor (section 4: `.cdr` and CMX open with TraceDraw's reader on `cdr`; previously: Draw mode merged into `main`; previously: `main` is now the DRAWcraft app and publishes the web build; two repositories: product here, features on `withshalom/vectorcraft`; DRAWcraft spelling; `web` branch; previously: section 7, what's built: branding, icon, `.drawcraft` saving, pages first slice, web build; previously: the page model is an artboard plus a side table, not a second rectangle type; owner's decisions D1 and D2 recorded; P0 rules added; the "no version bump" format rule and our own command names corrected from the first version)
 
 Branch `drawcraft` of `withshalom/drawcraft`. Written 2026-10-28. A plan and a list of decisions for the owner.
 
@@ -85,6 +85,12 @@ when a document uses pages. Files in Pages mode open in upstream's VectorCraft a
 kept unread; that has to be proved by a test, not assumed.
 
 ## 4. Opening `.cdr` files
+
+> **Done (2026-10-29), on the `cdr` branch:** `.cdr` and CMX files open with **TraceDraw's reader**
+> ([igtoth/tracedraw](https://github.com/igtoth/tracedraw), MIT OR Apache-2.0), a fifth option the table below
+> didn't know: an open Rust reader under our own licence, copied as `crates/tracedraw-*` and mapped to VectorCraft
+> art in the engine. The owner chose it over libcdr (decision D4 in `docs/draw-mode.md`). What reads, what is
+> approximated and what's next: `docs/draw-mode.md` §5. The analysis below is kept as it was written.
 
 **What is known (unverified, check before relying on it).**
 - Corel doesn't publish the `.cdr` specification. Older versions (up to roughly X3) are RIFF-based; X4 and later
@@ -214,6 +220,7 @@ field that master art can hold, and the canvas laying pages out in order.
 
 | Date | Change |
 |---|---|
+| 2026-10-29 | Section 4: `.cdr` and CMX files open on `cdr`, with TraceDraw's reader borrowed (D4) |
 | 2026-10-28 | First version: goal, decisions, gaps, `.cdr` options and stages, phases |
 | 2026-10-28 | Owner decided D1 (product DRAWcraft, extension `.drawcraft`) and D2 (same format as `.vectorcraft`, no version bump). Added D7 (branding). P0: Corel clean-room rules in `CLAUDE.md` and `AGENTS.md`, Corel names in `cargo xtask brands`. Command names must be our own words. EPS test `coreldraw_files_read_as_vectors`: its procedure names are Corel-style, and the repo's shallow history can't show what it was written from; it is upstream's file, left as it is, to ask upstream about if it matters. |
 | 2026-10-29 | Owner approved Draw mode (Illustrate and Draw modes, page bar, swatch strip) from the vectorcraft repo's `draw-mode`; merged into `main` here. |

@@ -9,7 +9,8 @@
 //! (mutated object streams, archives and indexed PNG previews, hostile image dimensions), nor the
 //! font files a folder search reads (damaged fonts, collections whose headers give any count of
 //! faces), nor scripts written for the reference app checked without running them (garbage,
-//! generated script text and mutated scripts).
+//! generated script text and mutated scripts), nor `.cdr` and CMX drawings (mutated and cut files,
+//! garbage after each form's header).
 //!
 //! `PROPTEST_CASES=20000 cargo test -p vectorcraft-engine --test import_fuzz` runs a deeper search.
 // Integration tests: unwrapping and panicking on failure is fine here, unlike in shipped code (AGENTS.md › Robustness).
@@ -4340,5 +4341,95 @@ proptest! {
         let far = ai_private(&blend_text(steps).replace(" 40 m\n", " 1e300 m\n").replace(" 50 L\n", " -1e300 L\n"));
         survive("a .ai blend far out", || Some(vectorcraft_eps::layered_ai(&far, Document::new(100.0, 100.0), vec![], false, true, 1.0).0))?;
         survive("mutated .ai blend", || Some(vectorcraft_eps::layered_ai(&private, Document::new(100.0, 100.0), vec![], false, true, 1.0).0))?;
+    }
+}
+
+// ---------- CDR and CMX drawings ----------
+
+/// A drawing made in TraceDraw's model and written by its `.cdr` writer (no file made with any
+/// other application): two pages, a master layer, a rectangle, an ellipse, a polygon, a curve, a
+/// group, a clip frame and artistic and paragraph text.
+fn cdr_sample(version: Option<u16>) -> Vec<u8> {
+    use tracedraw_core as td;
+    let mut doc = td::Document::new("Fuzz", td::Size::new(100.0, 80.0));
+    let mut shape = |doc: &mut td::Document, kind: td::ShapeKind| {
+        let id = doc.ids_mut().shape();
+        let mut s = td::Shape::new(id, kind);
+        s.fill = td::Fill::Solid(td::Color::Cmyk { c: 0.1, m: 0.6, y: 0.2, k: 0.0 });
+        s.stroke = Some(td::Stroke { width: 0.5, dash: vec![2.0, 1.0], ..td::Stroke::default() });
+        s
+    };
+    let r = td::Rect::new(5.0, 5.0, 40.0, 30.0);
+    let mut path = td::BezPath::new();
+    path.move_to((10.0, 50.0));
+    path.curve_to((20.0, 70.0), (40.0, 30.0), (60.0, 55.0));
+    let rect = shape(&mut doc, td::ShapeKind::Rect { rect: r, radius: 2.0, corners: None });
+    let ellipse = shape(&mut doc, td::ShapeKind::Ellipse { rect: r, arc: None });
+    let polygon = shape(&mut doc, td::ShapeKind::Polygon { rect: r, points: 5, sharpness: 0.5, complex: None, twist: 0.0 });
+    let curve = shape(&mut doc, td::ShapeKind::Path { path, closed: false });
+    let group = shape(&mut doc, td::ShapeKind::Group { children: vec![ellipse.clone(), polygon.clone()] });
+    let clip = shape(&mut doc, td::ShapeKind::ClipFrame { frame: Box::new(rect.clone()), contents: vec![curve.clone()] });
+    let text = |doc: &mut td::Document, frame| {
+        shape(
+            doc,
+            td::ShapeKind::Text {
+                spans: vec![td::TextSpan::new("Fuzz\ntext", "Sans", 18.0)],
+                origin: td::Point::new(10.0, 60.0),
+                frame,
+                align: td::TextAlign::Center,
+                para: td::ParagraphStyle::default(),
+                on_path: None,
+            },
+        )
+    };
+    let artistic = text(&mut doc, None);
+    let paragraph = text(&mut doc, Some(td::Size::new(50.0, 20.0)));
+    doc.pages[0].layers[0].shapes.extend([rect, group, clip, curve, artistic]);
+    let (page, layer, master) = (doc.ids_mut().page(), doc.ids_mut().layer(), doc.ids_mut().layer());
+    let mut l = td::Layer::new(layer, "Layer 1");
+    l.shapes.push(paragraph);
+    doc.pages.push(td::Page { id: page, name: "Two".into(), size: td::Size::new(80.0, 100.0), layers: vec![l], guides: vec![], background: None });
+    let mut m = td::Layer::new(master, "Master");
+    m.shapes.push(polygon);
+    doc.master.push(m);
+    match version {
+        Some(v) => tracedraw_cdr::write::document_to_cdr_version(&doc, v),
+        None => tracedraw_cdr::write::document_to_cdr(&doc),
+    }
+}
+
+#[test]
+fn the_cdr_samples_open_with_their_pages_and_objects() {
+    for version in [None, Some(12)] {
+        let l = vectorcraft_engine::cmd::fileio::load("x.cdr", &cdr_sample(version)).unwrap();
+        assert_eq!(l.doc.artboards.len(), 2, "{version:?}");
+        assert!(l.doc.pages.as_ref().is_some_and(|p| !p.master_layers.is_empty()), "{version:?}");
+        assert!(l.doc.layers.iter().any(|layer| layer.children().is_some_and(|c| !c.is_empty())), "{version:?}");
+    }
+}
+
+proptest! {
+    #![proptest_config(config())]
+
+    #[test]
+    fn cdr_files_with_mutated_bytes_render_and_export(
+        edits in prop::collection::vec((0usize..1 << 20, any::<u8>()), 1..24),
+        cut in prop::option::of(0usize..1 << 20),
+        riff in any::<bool>(),
+    ) {
+        let mut bytes = cdr_sample(riff.then_some(12));
+        let n = bytes.len();
+        for (at, b) in edits { bytes[at % n] = b; }
+        if let Some(c) = cut { bytes.truncate(c % n); }
+        survive("CDR file", || vectorcraft_engine::cmd::fileio::load("x.cdr", &bytes).ok().map(|l| l.doc))?;
+    }
+
+    #[test]
+    fn cdr_and_cmx_garbage_never_panics(tail in prop::collection::vec(any::<u8>(), 0..4096), form in 0u8..3) {
+        // A RIFF header of each form the reader takes, then anything.
+        let head: &[u8] = match form { 0 => b"RIFF\x00\x10\x00\x00CDRC", 1 => b"RIFF\x00\x10\x00\x00CMX1", _ => b"PK\x03\x04" };
+        let mut bytes = head.to_vec();
+        bytes.extend(tail);
+        survive("CDR or CMX garbage", || vectorcraft_engine::cmd::fileio::load("x.cdr", &bytes).ok().map(|l| l.doc))?;
     }
 }

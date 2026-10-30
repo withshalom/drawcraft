@@ -24,6 +24,7 @@
 mod action_batch;
 mod affinity;
 mod batch;
+mod cdr;
 pub mod dxf;
 pub mod dxfimport;
 mod encode;
@@ -128,6 +129,8 @@ pub use formats::{
 mod tests;
 #[cfg(test)]
 mod tests_affinity;
+#[cfg(test)]
+mod tests_cdr;
 #[cfg(test)]
 mod tests_pdf;
 #[cfg(test)]

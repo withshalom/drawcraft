@@ -55,8 +55,8 @@ cutter, an engraver or a print shop reaches for in apps like CorelDRAW:
 - **A familiar workspace:** an optional layout and shortcuts for people coming from CorelDRAW, beside VectorCraft's
   own.
 
-How and in what order is in [**the plan**](docs/drawcraft-plan.md). Corel's software is never run, inspected or
-copied: the clean-room rule in [`AGENTS.md`](AGENTS.md) covers it as it covers Adobe's.
+How and in what order is in [**the plan**](docs/drawcraft-plan.md). Agents never run, inspect or copy Corel's
+software: the work comes from files, and people check fidelity in their own copies ([`AGENTS.md`](AGENTS.md)).
 
 ## Try it in your browser
 
@@ -101,7 +101,7 @@ These screenshots are of VectorCraft, which today's DRAWcraft matches feature fo
 | Illustrator `.ai` | yes (the PDF part and the structure of the editing data) | yes (PDF-compatible, or legacy version 7 with layers and groups) |
 | PSD / PSB, PNG, JPEG, GIF, BMP, TIFF, Targa, WebP | yes | PNG, JPEG, WebP, GIF, TIFF, layered PSD |
 | Affinity `.af`, `.afdesign`, `.afpub` | yes | no |
-| CorelDRAW `.cdr` | **planned** ([plan § 4](docs/drawcraft-plan.md#4-opening-cdr-files)) | no (exports Corel-readable PDF, SVG, EPS, `.ai`, EMF and DXF instead) |
+| CorelDRAW `.cdr`, CMX | yes, as pages, layers and editable objects, with [TraceDraw](https://github.com/igtoth/tracedraw)'s reader ([details](docs/draw-mode.md#5-cdr-support-cdr)) | no (exports Corel-readable PDF, SVG, EPS, `.ai`, EMF and DXF instead) |
 
 **One format, two names.** `.drawcraft` was VectorCraft's own extension before it was renamed, and every
 VectorCraft still opens it. DRAWcraft takes the name back for the same format: a `.drawcraft` file is a

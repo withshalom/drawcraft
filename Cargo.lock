@@ -6315,6 +6315,8 @@ dependencies = [
  "serde",
  "serde_json",
  "thiserror 2.0.21",
+ "tracedraw-cdr",
+ "tracedraw-core",
  "vectorcraft-affinity",
  "vectorcraft-brush",
  "vectorcraft-cad",

@@ -1,6 +1,6 @@
 # Draw mode and `.cdr` support
 
-> **Last reviewed:** 2026-10-28 · **Last updated:** 2026-10-28 · **Change:** minor (section 3: the page-based layout compared with the Illustrator style, from public help pages; Illustrate and Draw modes, D6; previously: first version)
+> **Last reviewed:** 2026-10-29 · **Last updated:** 2026-10-29 · **Change:** major (section 5: `.cdr` and CMX files open, with TraceDraw's reader, D4 decided; previously: section 3: the page-based layout compared with the Illustrator style, from public help pages; Illustrate and Draw modes, D6; previously: first version)
 
 Work on the fork `withshalom/vectorcraft`, meant to go to VectorCraft as pull requests:
 
@@ -57,7 +57,7 @@ Tests: `crates/doc/src/pages/tests.rs`, `crates/engine/src/cmd/pages/tests.rs`.
 | D1 | Draw mode is opt-in. The Illustrator-style layout, menus and shortcuts stay the default. | decided |
 | D2 | No new file format and no format version bump: additions are optional document fields. | decided |
 | D3 | No renaming of crates, commands or files; new work in new files beside upstream's. | decided |
-| D4 | Source of `.cdr` knowledge. libcdr (Document Liberation Project) is the one widely used open reader; its licence is listed as MPL-2.0. Porting it means one MPL-2.0 crate in an MIT OR Apache-2.0 tree, credited in `NOTICE`, which upstream may refuse. The alternative is a reader written only from users' own files and openly licensed sample files. | **open: the owner decides, and asks upstream before proposing either** |
+| D4 | Source of `.cdr` knowledge: **TraceDraw's reader** (https://github.com/igtoth/tracedraw, MIT OR Apache-2.0), copied with its document model into `crates/tracedraw-*` and credited in `NOTICE` (`crates/tracedraw-cdr/README.md`). libcdr (MPL-2.0) is not used. TraceDraw's knowledge comes from public format notes, files their owners sent and fidelity checks people made in their own copies of the original application (its `CLEANROOM.md`, kept beside the crates); agents never run or inspect that application. Being borrowed code, this stays in DRAWcraft unless upstream asks for it (D5). | decided (owner, 2026-10-29) |
 | D5 | Ask upstream before proposing pages, draw mode or `.cdr` support, and send each as a pull request of its own. | decided |
 
 | D6 | Two modes, **Illustrate** (the default: VectorCraft as it is, Illustrator-style) and **Draw** (the page-based layout below), switched from the app bar or Window › Mode. The mode changes the window's arrangement and adds page-based chrome; it never changes the document, the commands, the menus' contents or the shortcuts. | decided (owner, 2026-10-28) |
@@ -123,24 +123,27 @@ document without pages makes it a pages document (`pages.insert` on an artboards
 
 ## 5. `.cdr` support (`cdr`)
 
-Corel doesn't publish the format. What is said about it (older files RIFF, newer ones a ZIP container holding
-RIFF-style data, XML and a thumbnail) is unverified until checked against a primary source. Stages, each ending
-with a short report and a corpus count, as the Affinity audit does (`docs/affinity-validation.md`):
+Corel doesn't publish the format. DRAWcraft reads it with TraceDraw's reader (D4): `tracedraw-cdr-format` reads the
+containers (a bare RIFF file up to version 13, a ZIP package with its RIFF stream and data members from 14 on) and
+the chunk tree, `tracedraw-cdr` turns them into TraceDraw's document (`tracedraw-core`), and the engine maps that
+to VectorCraft art (`crates/engine/src/cmd/fileio/cdr`). CMX exchange files come through the same reader. Open
+and Place take them; detection goes by content, so a renamed file opens too.
 
-1. **C1, identify:** sniff the container and version, read the metadata and the embedded thumbnail, and refuse
-   versions not read yet with a clear message. Safe to ship early.
-2. **C2, geometry:** pages, layers, paths and shapes, fills, strokes, dashes, arrowheads and transforms; anything
-   unread becomes a warning, never a crash.
-3. **C3, content:** text, bitmaps, contained art, symbols, palettes and spot colours.
-4. **C4, effects:** blends, contours, envelopes, extrusions, shadows and lenses, live where VectorCraft has the
-   effect and as their drawn look otherwise.
-5. **C5, writing,** after reading is solid. No open `.cdr` writer exists to learn from, so this is original work
-   built from what reading teaches, and a file can look valid yet open wrongly. It is its own pull request, with
-   round-trip tests (VectorCraft → `.cdr` → VectorCraft) and files people open in CorelDRAW themselves and report
-   on (we never run Corel software).
+| Stage | What | Status |
+|---|---|---|
+| C1, identify | Container and version; damaged and unknown versions refused with a message | done (TraceDraw's reader) |
+| C2, geometry | Pages (side by side, as a pages document), layers (one per name across the pages), master layers, curves, rectangles, ellipses, polygons, groups, clip frames; fills, outlines, dashes, arrowheads, transforms | done; rectangles, ellipses and polygons come in as curves |
+| C3, content | Artistic text (point type) and paragraph text (area type), bitmaps, tables and symbols (as their parts), page backgrounds | done; text on a path comes in as ordinary text, columns as one column, embedded fonts unused |
+| C4, effects | Blends, contours, envelopes, extrusions, distortions and bitmap effects as what they draw; drop shadows as the drop shadow effect | done as drawn looks, not live |
+| C5, writing | TraceDraw's writer is in `tracedraw-cdr`; saving needs the reverse mapping (VectorCraft → TraceDraw) | not started |
 
-Every stage is fuzzed (`engine/tests/import_fuzz.rs`) and never panics. Test files are openly licensed with a
-recorded source and SHA-256, fetched pinned, never committed (`CLAUDE.md`, Shared test corpora).
+Also approximated, each with a warning: spot colours (as their process colours), pattern, texture and mesh fills
+(a flat colour), conical and square fountain fills (linear gradients), calligraphic and variable-width outlines
+(plain outlines), master layers on odd or even pages only (every page), guides (left out).
+
+Tests write their drawings with TraceDraw's writer (`fileio/tests_cdr.rs`); damaged files are swept there and in
+`engine/tests/import_fuzz.rs`, and never panic. Real files for checking fidelity are users' own (used locally,
+never committed) or openly licensed with a recorded source and SHA-256, fetched pinned (`CLAUDE.md`).
 
 ## 6. Rules
 
@@ -153,5 +156,6 @@ recorded source and SHA-256, fetched pinned, never committed (`CLAUDE.md`, Share
 
 | Date | Change |
 |---|---|
+| 2026-10-29 | Section 5 and D4: `.cdr` and CMX files open, with TraceDraw's reader borrowed (stages C1 to C4 as listed); the Corel rule says agents never use the application |
 | 2026-10-28 | Section 3: layout comparison with sources; the Illustrate and Draw modes (D6), the page bar and the swatch strip |
 | 2026-10-28 | First version: what exists (pages and master layers, Corel clean-room rules), decisions, draw mode, `.cdr` stages with writing last |
